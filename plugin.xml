@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  id="cordova-plugin-inapppurchases"
+  version="1.0.0">
+
+  <name>In App Purchase</name>
+  <description>Cordova plugin to add in-app-purchases (and subscriptions) into an app, use javascript to view, make, and complete purchases.</description>
+  <engines>
+    <engine name="cordova" version=">=5.0.0" />
+    <engine name="cordova-android" version=">=7.0.0" />
+  </engines>
+  <repo>https://github.com/cozycodegh/cordova-plugin-inapppurchases.git</repo>
+  <issue>https://github.com/cozycodegh/cordova-plugin-inapppurchases/issues</issue>
+
+  <license>MIT</license>
+  <keywords>cordova,plugin,in-app-purchases,inapppurchases,inapppurchase,subscription,app,ios,android,ecosystem:cordova,purchase,purchases,cordova-android,cordova-ios,payments,in,app,promise,promises,android,ios,itunes,google,play,ionic,phonegap,storekit,appstore</keywords>
+
+  <platform name="ios">
+    <js-module src="www/billing-ios.js" name="PaymentsPlugin">
+      <clobbers target="inAppPurchases" />
+    </js-module>
+
+    <config-file target="config.xml" parent="/*">
+      <feature name="PaymentsPlugin">
+        <param name="ios-package" value="PaymentsPlugin"/>
+      </feature>
+    </config-file>
+
+    <header-file src="src/ios/RMStore.h" />
+    <source-file src="src/ios/RMStore.m" />
+    <header-file src="src/ios/PaymentsPlugin.h" />
+    <source-file src="src/ios/PaymentsPlugin.m" />
+
+    <framework src="StoreKit.framework" />
+  </platform>
+
+  <platform name="android">
+    <js-module src="www/billing-android.js" name="InAppBilling">
+      <merges target="inAppPurchases" />
+    </js-module>
+
+    <config-file target="res/xml/config.xml" parent="/*">
+      <feature name="InAppBilling">
+        <param name="android-package" value="com.alexdisler_github_cozycode.inapppurchases.InAppBilling"/>
+      </feature>
+    </config-file>
+
+    <source-file src="src/android/InAppBilling.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
+    <source-file src="src/android/Base64.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
+    <source-file src="src/android/Base64DecoderException.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
+    <source-file src="src/android/IabException.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
+    <source-file src="src/android/IabHelper.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
+    <source-file src="src/android/IabResult.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
+    <source-file src="src/android/IabInventory.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
+    <source-file src="src/android/IabPurchase.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
+    <source-file src="src/android/IabSecurity.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
+    <source-file src="src/android/IabProductDetails.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
+    <source-file src="src/android/IabNext.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
+
+    <framework src="com.android.billingclient:billing:5.0.0" />
+  </platform>
+  
+  <platform name="fire-os">
+    <js-module src="www/billing-android.js" name="InAppBilling">
+      <merges target="inAppPurchases" />
+    </js-module>
+
+    <config-file target="res/xml/config.xml" parent="/*">
+      <feature name="InAppBilling">
+        <param name="android-package" value="com.alexdisler_github_cozycode.inapppurchases.InAppBilling"/>
+      </feature>
+    </config-file>
+
+    <source-file src="src/android/InAppBilling.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
+    <source-file src="src/android/Base64.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
+    <source-file src="src/android/Base64DecoderException.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
+    <source-file src="src/android/IabException.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
+    <source-file src="src/android/IabHelper.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
+    <source-file src="src/android/IabResult.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
+    <source-file src="src/android/IabInventory.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
+    <source-file src="src/android/IabPurchase.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
+    <source-file src="src/android/IabSecurity.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
+    <source-file src="src/android/IabProductDetails.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
+    <source-file src="src/android/IabNext.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
+
+    <framework src="com.android.billingclient:billing:5.0.0" />
+  </platform>
+  
+  <!-- not supported below -->
+  <platform name="browser">
+      <js-module src="www/billing-unsupported.js" name="PaymentsPlugin">
+        <clobbers target="inAppPurchases" />
+      </js-module>
+  </platform>
+  
+  <!-- not supported below -->
+  <platform name="windows">
+      <js-module src="www/billing-unsupported.js" name="PaymentsPlugin">
+        <clobbers target="inAppPurchases" />
+      </js-module>
+  </platform>
+
+</plugin>
+
