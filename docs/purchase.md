@@ -41,7 +41,7 @@ purchase["completed"]       // boolean: has been acknowledged or consumed, will 
 ## Some of the Possible Error Messages <a id="buy-errors"></a>
 
 ### Android
-some errors can be retried automatically, otherwise could display an error message that the purchase did not go through and let them re-try themselves with another button press
+Some errors can be retried automatically, otherwise could display an error message that the purchase did not go through and let them re-try themselves with another button press
 ```
 - USER_CANCELLED        - Transaction was canceled by the user.
 - BILLING_UNAVAILABLE   - The Google Play Store is not available from this device, or unable to charge with this account.
