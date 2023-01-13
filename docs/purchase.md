@@ -13,7 +13,9 @@ inAppPurchases.purchase(productId).then(function (purchase) {
     // view or handle error messages
 });
 ```
-![buy an in app purchase or subscription from a button press](purchase.png)
+<p align="center">
+<img src="purchase.png" alt="buy an in app purchase or subscription from a button press" width="200" align="center" />
+</p>
 
 ## Description:
  - get a list of the products found on the app store for your app
@@ -36,31 +38,34 @@ purchase["pending"]         // boolean: Android only, purchase is pending (not p
 purchase["completed"]       // boolean: has been acknowledged or consumed, will be false (in Android), unacknowledged purchases will be returned after a few days in Android. unconsumed purchases will not be available for repurchase until they are completed
 ```
 
-## Some of the Possible Error Messages
+## Some of the Possible Error Messages <a id="buy-errors"></a>
 
 ### Android
 some errors can be retried automatically, otherwise could display an error message that the purchase did not go through and let them re-try themselves with another button press
-- `USER_CANCELLED` - Transaction was canceled by the user.
-- `BILLING_UNAVAILABLE` - The Google Play Store is not available from this device, or unable to charge with this account.
-- `ITEM_ALREADY_OWNED` - The purchase failed because the item is already owned. (Make sure to consume consumables with completePurchase)
-- `ITEM_UNAVAILABLE` - The requested product is not available for purchase.
-- `SERVICE_DISCONNECTED` - The app is not connected to the Play Store service via the Google Play Billing Library. (Okay to automatically retry purchase a few times)
-- `SERVICE_TIMEOUT` - The request has reached the maximum timeout before Google Play responds.  (Okay to automatically retry purchase a few times) 
-- `SERVICE_UNAVAILABLE` - The service is currently unavailable.  (Okay to automatically retry purchase a few times)
-- `FEATURE_NOT_SUPPORTED` - The requested feature is not supported by the Play Store on the current device.
-- `BILLING_UNAVAILABLE` - A user billing error occurred during processing.
-- `DEVELOPER_ERROR` - Error resulting from incorrect usage of the API. (For example not including the manifest.json Google Play key.)
-- `ERROR` - Fatal error during the API action. (Okay to automatically retry purchase a few times)
+```
+- USER_CANCELLED        - Transaction was canceled by the user.
+- BILLING_UNAVAILABLE   - The Google Play Store is not available from this device, or unable to charge with this account.
+- ITEM_ALREADY_OWNED    - The purchase failed because the item is already owned. (Make sure to consume consumables with completePurchase)
+- ITEM_UNAVAILABLE      - The requested product is not available for purchase.
+- SERVICE_DISCONNECTED  - The app is not connected to the Play Store service via the Google Play Billing Library. (Okay to automatically retry purchase a few times)
+- SERVICE_TIMEOUT       - The request has reached the maximum timeout before Google Play responds.  (Okay to automatically retry purchase a few times) 
+- SERVICE_UNAVAILABLE   - The service is currently unavailable.  (Okay to automatically retry purchase a few times)
+- FEATURE_NOT_SUPPORTED - The requested feature is not supported by the Play Store on the current device.
+- BILLING_UNAVAILABLE   - A user billing error occurred during processing.
+- DEVELOPER_ERROR       - Error resulting from incorrect usage of the API. (For example not including the manifest.json Google Play key.)
+- ERROR                 - Fatal error during the API action. (Okay to automatically retry purchase a few times)
+```
 
 ### iOS
-- `Unknown product identifier`        - developer: wait up to one hour for products to be added to the appstore billing api when you add them to an app for the first time 
+```
+- Unknown product identifier        - developer: wait up to one hour for products to be added to the appstore billing api when you add them to an app for the first time 
         - calls to the plugin: wait for the first request to getAllProductInfo to complete before calling buy or restore in iOS
-- `Cannot connect to iTunes Store`    - if a buy fails with this message, it could have been cancelled by the user or there could have been some other connection issue
+- Cannot connect to iTunes Store    - if a buy fails with this message, it could have been cancelled by the user or there could have been some other connection issue
+```
 
-- **see [errors](errors.md#List of common in app purchase errors with billing:)**
+**[see more common errors](errors.md#common-errors)**
 
 ## Example
-
 ```
 function buyRemoveAds(){
     inAppPurchases.purchase(ads_remove_id).then( function(purchase){
@@ -86,4 +91,10 @@ function buyRemoveAds(){
 - subscriptions return the first base offer and phase available 
 - in-app products returns the first offer available to them
 
-[go to main](../README.md#PLUGIN USAGE)
+<hr/>
+
+<p align="center">
+
+[go to main](../README.md#plugin-usage)
+
+</p>

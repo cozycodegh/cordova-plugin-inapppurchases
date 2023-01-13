@@ -9,7 +9,9 @@ inAppPurchases.completePurchase(productId,consume)
         // view or handle error messages
     });
 ```
-![buy an in app purchase or subscription from a button press](complete_purchase.png)
+<p align="center">
+<img src="purchase_complete.png" alt="buy an in app purchase or subscription from a button press" width="200" align="center" />
+</p>
 
 ## Description:
  - complete a purchase, consume it if it is a consumable
@@ -17,11 +19,11 @@ inAppPurchases.completePurchase(productId,consume)
  - use after every purchase call
  - use after loading purchases with [`inAppPurchases.restorePurchases(productIds)`](restorePurchases.md#Example)) to complete delayed purchases once they are not pending
  - check if the purchase has been paid for before calling `["pending"] == false`, as it will fail if the purchase is still pending (on Android)
- \* FYI: this function is necessary on Android, whereas on iOS the purchases do not need to be acknowledged, and they are consumed during the inAppPurchases.purchase call. On iOS this is function always completes successfully after a new purchase
+ \* FYI: this function is necessary on Android, whereas on iOS the purchases do not need to be acknowledged, and they are consumed during the `inAppPurchases.purchase` call. On iOS this is function always completes successfully without connecting to the store after a new purchase
 
 ## Parameters:
-- product id to complete purchase (string)
-- consume (boolean - optional, will be false by default if not supplied)
+- `product id` to complete purchase (string)
+- `consume` (boolean - optional, will be false by default if not supplied)
     - consume this product
     - necessary on Android for consumables, they will not be available to buy again until consumed
 
@@ -59,4 +61,10 @@ function completeAdPurchase(){
 - on Android the time needed to call `inAppPurchases.completePurchase(productId)` starts after it is no longer pending. After it has been paid for, the purchase must be completed within a few days or it will be returned 
 - since the API returns a promise, it is asynchronous... call it and continue with other actions, or await for it to finish from within an async function to wait for the call to finish. 
 
-[go to main](../README.md#PLUGIN USAGE)
+<hr/>
+
+<p align="center">
+
+[go to main](../README.md#plugin-usage)
+
+</p>

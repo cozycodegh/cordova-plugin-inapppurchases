@@ -9,7 +9,9 @@ inAppPurchases.restorePurchases().then(function (purchases) {
     // view or handle billing or api error messages
 });
 ```
-![put a restore button somewhere](docs/restore_button.png)
+<p align="center">
+<img src="restore_button.png" alt="put a restore button somewhere" width="300" align="center" />
+</p>
 
 ## Description:
  - get a list of purchased products 
@@ -53,13 +55,22 @@ function onRestoreButtonPressOrUpdate(){
 ```
 
 ## Tips:
- - returns pending non-consumed purchases and unacknowledged purchases, useful if the completePurchase call fails to re-run it later 
+- returns pending non-consumed purchases and unacknowledged purchases, useful if the completePurchase call fails to re-run it later 
    (eg. for Android slow card purchase, which would be completed later by calling `onRestoreButtonPressOrUpdate` from `onResume`)
-- call from a "restore" button press, check for errors and try again later with setTimeout if another call was in progress 
+- call from a `restore button` press
+- call from `onDeviceReady` to load purchases into the app
+- call from `onResume` to load new purchases and updates
+- check for errors and try again later with setTimeout if another call was in progress 
 - since the API returns a promise, it is asynchronous... call it and continue with other actions, use it in promise chaining, or await for it to finish from within an async function to wait for the call to finish. 
 
 ## Notes:
 
 (note from previous API: current state is no longer needed as cancelled and refunded purchases are no longer returned here by Google)
 
-[go to main](../README.md#PLUGIN USAGE)
+<hr/>
+
+<p align="center">
+
+[go to main](../README.md#plugin-usage)
+
+</p>

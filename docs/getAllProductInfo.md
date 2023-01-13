@@ -9,11 +9,13 @@ inAppPurchases.getAllProductInfo(productIds).then(function (products) {
     // view or handle error messages
 });
 ```
-    ![show price listings](docs/price_buy_button.png)
+<p align="center">
+<img src="price_buy_button.png" alt="show price listings" width="300" align="center" />
+</p>
 
 ## Description:
  - get a list of the products found on the app store for your app
- - use on the start up of the device (`onDeviceReady`) to edit UI and include prices from the  app store
+ - use on the start up of the device (`onDeviceReady`) to edit UI and include prices from the app store
 
 ## Parameters:
 ` - list of product ids `
@@ -71,6 +73,12 @@ function populatePrices_afterDeviceReady(){
 
 - call from `onDeviceReady` to load products and prices into your app
 - in *iOS this must be called before* the other calls
-- since the API returns a promise, it is asynchronous... call it and continue with other actions, or await for it to finish from within an async function to wait for the call to finish. 
+- call this again if it fails
 
-[go to main](../README.md#PLUGIN USAGE)
+<hr/>
+
+<p align="center">
+
+[go to main](../README.md#plugin-usage)
+
+</p>
