@@ -1,14 +1,14 @@
 # Cordova-Plugin-InAppPurchases
 
-***Cordova*** plugin to add ***in-app purchases*** (and ***subscriptions***) into an app. <br>
-Use javascript to view, make, and complete purchases.
-
 Updated __2023__ for [Cordova](https://cordova.apache.org/) with current:<br>
 __Android__: *Billing Library 5* (released May 2022) (verifies receipts internally)<br>
 __iOS__: *StoreKit* (not StoreKit 2, released 2021, which is only available for iOS 15 and up) (does not verify receipts currently - but returns them)<br>
 __Amazon Fire__: compatible, but untested <br>
 __Browser__: not implemented<br>
 __Windows__: not implemented <br>
+
+***Cordova*** plugin to add ***in-app purchases*** (and ***subscriptions***) into an app. <br>
+Use javascript to view, make, and complete purchases.
 
 If you notice any issues, submit here: [github issues](https://github.com/cozycodegh/cordova-plugin-inapppurchases/issues)<br>
 Based on the original plugin working for many years made by Alex Disler, it is out of date for the latest apps:<br> [`cordova-plugin-inapppurchase`](https://github.com/AlexDisler/cordova-plugin-inapppurchase)<br>
@@ -31,13 +31,14 @@ The plugin creates an `inAppPurchases` object which can make calls to the store.
 
 How to create a cordova app: <br>
 ```
+npm install -g cordova
 cordova create directory_name com.your_name_or_company.your_app_name
 ```
 <p align="center">
 <img src="docs/cordova.png" alt="cordova app" width="300" align="center" />
 </p>
 
-Cordova is an open source project maintened by Apache that lets you make apps written in HTML, css, and javascript. You can create cross-platform apps to publish on the Google Play Store for Android, and the Appstore for iOS, macOS, and apple devices.
+Cordova is an open source project maintained by Apache that lets you make apps written in HTML, css, and javascript. You can create cross-platform apps to publish on the Google Play Store for Android, and the Appstore for iOS, macOS, and apple devices.
 
 # ADD IN APP PURCHASES
 
@@ -100,7 +101,7 @@ see [common error messages](docs/errors.md) to handle other results
 ## Additional Copyright for new plugin distribution<br>
 MIT Licensed (MIT)
 
-Copyright © 2023 cozycode.ca
+Copyright © 2023 [cozycode.ca](https://cozycode.ca)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do  so, subject to the following conditions:
 
