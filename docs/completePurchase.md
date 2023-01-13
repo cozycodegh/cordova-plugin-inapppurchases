@@ -17,7 +17,7 @@ inAppPurchases.completePurchase(productId,consume)
  - complete a purchase, consume it if it is a consumable
  - acknowledges and consumes purchases (on Android unacknowledged purchases will be returned after a few days)
  - use after every purchase call
- - use after loading purchases with [`inAppPurchases.restorePurchases(productIds)`](restorePurchases.md#Example)) to complete delayed purchases once they are not pending
+ - use after loading purchases with [`inAppPurchases.restorePurchases(productIds)`](restorePurchases.md#Example) to complete delayed purchases once they are not pending
  - check if the purchase has been paid for before calling `["pending"] == false`, as it will fail if the purchase is still pending (on Android)
  \* FYI: this function is necessary on Android, whereas on iOS the purchases do not need to be acknowledged, and they are consumed during the `inAppPurchases.purchase` call. On iOS this is function always completes successfully without connecting to the store after a new purchase
 
