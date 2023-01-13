@@ -17,7 +17,7 @@ inAppPurchases.restorePurchases().then(function (purchases) {
  - get a list of purchased products 
  - logs in and retrieves purchases for the user
  - useful to attempt to complete uncompleted purchases, once they are no longer pending
- - call from `onDeviceReady` (see example code: [`inAppPurchases.getAllProductInfo(productIds)`](getAllProductInfo.md))
+ - call from `onDeviceReady` (see example code: [`inAppPurchases.getAllProductInfo(productIds)`](getAllProductInfo.md#Example))
  - call from `onResume` (but check for errors, and timeout to try again later if it interferes with another call)
  - call from a `restore button` that the user can press to get back their purchases if they log in on a new device (required by App store)
  - note: will list pending purchases, check the pending state before rewarding the purchase
