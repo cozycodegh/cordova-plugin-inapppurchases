@@ -57,7 +57,8 @@ function populatePrices_afterDeviceReady(){
             if (purchases[i]["productId"] == ad_product_id){
                 //bought the removes ads purchase
                 if (purchases[i]["pending"]) continue;
-                if (!purchases[i]["completed"]) inAppPurchase.completePurchase(purchases[i]["productId"]);
+                if (!purchases[i]["completed"]) inAppPurchases.completePurchase(purchases[i]["productId"])
+                    .catch(function(err){ });
                 var buy_elem = document.getElementById("buy_button");
                 buy_elem.parentElement.removeChild(buy_elem);
                 removeAds();
