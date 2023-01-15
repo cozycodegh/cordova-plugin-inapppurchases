@@ -44,7 +44,9 @@ function onRestoreButtonPressOrUpdate(){
     inAppPurchases.restorePurchases().then( function(purchases){
         for (var i=0; i<purchases.length; i++){
             if (purchases[i]["pending"]) continue;
-            if (!purchases[i]["completed"]) inAppPurchase.completePurchase(purchases[i]["productId"]);
+            if (!purchases[i]["completed"]) inAppPurchases
+                .completePurchase(purchases[i]["productId"])
+                .catch(function(err){});
             // handle purchases:
             if (purchases[i]["productId"] == "ads_remove_id") removeAds();
         }
