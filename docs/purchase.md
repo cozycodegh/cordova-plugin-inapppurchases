@@ -72,7 +72,7 @@ function buyRemoveAds(){
         if (purchase[i]["pending"]) continue; //not paid for yet
         // handle purchase here, or after its been completed:
         removeAds();
-        return inAppPurchase.completePurchase(purchase["productId"]);
+        return inAppPurchases.completePurchase(purchase["productId"]);
     }).then(function(purchase){
         // purchase is acknowledged and consumed
     }).catch (function(err){
