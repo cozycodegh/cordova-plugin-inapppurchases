@@ -11,8 +11,8 @@ __Windows__: not implemented <br>
 Use JavaScript to view, make, and complete purchases.
 
 If you notice any issues, submit here: [github issues](https://github.com/cozycodegh/cordova-plugin-inapppurchases/issues)<br>
-Based on the original plugin working for many years made by Alex Disler (c) 2016 MIT, which is out of date for writing new apps:<br> [`cordova-plugin-inapppurchase`](https://github.com/AlexDisler/cordova-plugin-inapppurchase)<br>
-Forked from another plugin, which is kept updated as well, if this plugin is broken, try this plugin:<br> [`cordova-plugin-inapppurchase2`](https://github.com/wccrawford/cordova-plugin-inapppurchase-2)<br>
+Based on the original plugin working for many years made by Alex Disler (c) 2016 MIT, which is out of date for writing new apps: [`cordova-plugin-inapppurchase`](https://github.com/AlexDisler/cordova-plugin-inapppurchase)<br>
+Forked from another plugin, which is kept updated as well, if this plugin is broken, try this plugin: [`cordova-plugin-inapppurchase2`](https://github.com/wccrawford/cordova-plugin-inapppurchase-2)<br>
 This new plugin distribution makes significant changes to the Google Play Billing Library and plugin integration code.
 
 Have a good one! :grinning:
@@ -32,7 +32,7 @@ The plugin creates an `inAppPurchases` object which can make calls to the store.
 
 # Testing App
 
-After creating App Store and Google Play accounts, this app can test purchases. <br/>
+After creating [App Store and Google Play accounts and in-app products](#testing-tips), this app can test purchases. <br/>
 Download test app here:
 [cordova-plugin-inapppurchases Test App](https://github.com/cozycodegh/cordova-plugin-inapppurchases_TESTAPP)
 <p align="center">
