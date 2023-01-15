@@ -1,7 +1,7 @@
 # inAppPurchases.completePurchase(productId,consume)
 
 ## Usage:
-```
+```js
 inAppPurchases.completePurchase(productId,consume)
     .then(function(purchase){
         // purchase completed, acknolwedged and consumed
@@ -29,7 +29,7 @@ inAppPurchases.completePurchase(productId,consume)
 
 ## Returns:
 A purchase object:
-```
+```js
 purchase["productId"]       // string: the product id
 purchase["purchaseTime"]    // int: timestamp of purchase
 purchase["purchaseId"]      // string: id assigned by the app store when it was bought, called the Google order ID or Appstore transaction id
@@ -41,7 +41,7 @@ purchase["completed"]       // boolean: has been acknowledged or consumed, will 
 ```
 
 ## Example
-```
+```js
 function completeAdPurchase(){
     inAppPurchases.completePurchase(ad_remove_id)
         .then(function(purchase){

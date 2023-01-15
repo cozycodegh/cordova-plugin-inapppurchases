@@ -1,7 +1,7 @@
 # inAppPurchases.getAllProductInfo(productIds)
 
 ## Usage:
-```
+```js
 inAppPurchases.getAllProductInfo(productIds).then(function (products) {
     // access product information
     // update your app to show store pricing
@@ -23,7 +23,7 @@ inAppPurchases.getAllProductInfo(productIds).then(function (products) {
 ## Returns:
 Array of product details,
 Each product detail contains information that was set in the store (Google Play or Appstore):
-```
+```js
 products[i]["productId"]    // the product id
 products[i]["title"]        // name of the product
 products[i]["description"]  // description of the product
@@ -38,7 +38,7 @@ products[i]["introductoryOriginalPrice"] //iOS only - contains the original pric
 ```
 
 ## Example
-```
+```js
 //doing this after deviceready event to get product prices and restore purchases
 function populatePrices_afterDeviceReady(){
     inAppPurchases.getAllProductInfo(productIds).then( function (products) {

@@ -1,7 +1,7 @@
 # inAppPurchases.purchase(productId)
 
 ## Usage:
-```
+```js
 inAppPurchases.purchase(productId).then(function (purchase) {
     if (purchase[i]["pending"]) return; //not paid for yet, complete later
     // handle purchase
@@ -27,7 +27,7 @@ inAppPurchases.purchase(productId).then(function (purchase) {
 
 ## Returns:
 A purchase object:
-```
+```js
 purchase["productId"]       // string: the product id
 purchase["purchaseTime"]    // int: timestamp of purchase
 purchase["purchaseId"]      // string: id assigned by the app store when it was bought, called the Google order ID or Appstore transaction id
@@ -66,7 +66,7 @@ Some errors can be retried automatically, otherwise could display an error messa
 **[see more common errors](errors.md#common-errors)**
 
 ## Example
-```
+```js
 function buyRemoveAds(){
     inAppPurchases.purchase(ads_remove_id).then( function(purchase){
         if (purchase[i]["pending"]) continue; //not paid for yet

@@ -1,7 +1,7 @@
 # inAppPurchases.restorePurchases()
 
 ## Usage:
-```
+```js
 inAppPurchases.restorePurchases().then(function (purchases) {
     // access purchase information
     // update your purchases applied to the app
@@ -28,7 +28,7 @@ None
 ## Returns:
 Array of purchases,
 Each purchase object contains information about the purchase and its state:
-```
+```js
 purchases[i]["productId"]       // string: the product id
 purchases[i]["purchaseTime"]    // int: timestamp of purchase
 purchases[i]["purchaseId"]      // string: id assigned by the app store when it was bought, called the Google order ID or Appstore transaction id
@@ -39,7 +39,7 @@ purchases[i]["completed"]       // boolean: has been acknowledged or consumed, u
 ```
 
 ## Example
-```
+```js
 function onRestoreButtonPressOrUpdate(){
     inAppPurchases.restorePurchases().then( function(purchases){
         for (var i=0; i<purchases.length; i++){

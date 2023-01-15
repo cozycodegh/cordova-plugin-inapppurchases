@@ -6,12 +6,28 @@
  */
 var utils = {};
 utils.errors = {
-  101: 'invalid argument - productIds must be an array of strings',
-  102: 'invalid argument - productId must be a string',
-  103: 'invalid argument - product type must be a string',
-  104: 'invalid argument - receipt must be a string of a json',
-  105: 'invalid argument - signature must be a string'
+  'product_id_list' : { 101: 'invalid argument - productIds must be an array of strings'},
+  'product_id_string' : { 102: 'invalid argument - productId must be a string' },
+  'receipt_jsonstring' : { 103: 'invalid argument - receipt must be a string of a json'},
+  'signature_string' : { 104: 'invalid argument - signature must be a string' },
+  'billing_js_error' : { 111: 'billing js error' },
+  'not_implemented' : { 112: 'not implemented for this platform - iOS and Android only' }
 };
+utils.getError = function (errn){
+    //return new Error(utils.errors[code]);
+    var err = utils.errors[errn];
+    if (!err) err = { 110: errn };
+    var code = Object.keys(err)[0];
+    return {
+        'code' : code,
+        'message' : err[code]
+    };
+}
+utils.getJSError = function (err){
+    var e = utils.getError('billing_js_error');
+    e['message'] += ": "+err;
+    return e;
+}
 utils.validArrayOfStrings = function (val) {
   return val && Array.isArray(val) && val.length > 0 && !val.find(function (i) {
     return !i.length || typeof i !== 'string';
@@ -45,7 +61,13 @@ var inAppPurchases = {
 };
 
 var nativeCall = function nativeCall(name) {
-    return Promise.reject("not implemented for this platform - iOS and Android only")
+    return Promise.reject(inAppPurchases.utils.getError('not_implemented'));
+};
+var nativeCall = function nativeCall(name,a) {
+    var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+    return new Promise(function (resolve, reject) {
+          reject(inAppPurchases.utils.getError('not_implemented'));
+    });
 };
 
 /** 2023 modifications: MIT © cozycode.ca **/
@@ -53,16 +75,10 @@ inAppPurchases.getAllProductInfo = function(productIds){
     try {
         return new Promise(function (resolve, reject) {
             if (!inAppPurchases.utils.validArrayOfStrings(productIds)) {
-                reject(new Error(inAppPurchases.utils.errors[101]));
+                reject(inAppPurchases.utils.getError('product_id_list'));
             } else {
-                //console.log("chunking");
-                //console.log(productIds);
-                //console.log(utils);
                 //return utils.chunk(productIds, utils.max_product_ids).reduce(function (promise, productIds) {
-                    //console.log(productIds);
                     //return promise.then(function (result) {
-                        //console.log(result);
-                        //console.log("calling java");
                 return nativeCall('billingGetAllProductInfo', [productIds]).then(function (products) {
                     if (!products || !products.products) resolve([]);
                     else {
@@ -81,16 +97,13 @@ inAppPurchases.getAllProductInfo = function(productIds){
                                 introductoryOriginalPrice: val.price
                                 };
                             });
-                        //console.log(JSON.stringify(arr));
                         return resolve(arr);
                     }
                 })["catch"](reject);
-                    //});
-                //})["catch"](reject);
             }
         });
     } catch (err){
-        return Promise.reject("Billing js error: "+err);
+        return Promise.reject(inAppPurchases.utils.getJSError(err));
     }
 }
 
@@ -114,7 +127,7 @@ inAppPurchases.getPurchases = function(){
             }
             return arr;
         } catch (err) {
-            return Promise.reject("Billing js error: "+err);
+            return Promise.reject(inAppPurchases.utils.getJSError(err));
         }
     });
 }
@@ -139,7 +152,7 @@ inAppPurchases.restorePurchases = function(){
             }
             return arr;
         } catch (err) {
-            return Promise.reject("Billing js error: "+err);
+            return Promise.reject(inAppPurchases.utils.getJSError(err));
         }
     });
 }
@@ -148,7 +161,7 @@ inAppPurchases.purchase = function (productId){
     return new Promise(function (resolve, reject) {
         try {
             if (!inAppPurchases.utils.validString(productId)) {
-                reject(new Error(inAppPurchases.utils.errors[102]));
+                reject(inAppPurchases.utils.getError('product_id_string'));
             } else {
                 nativeCall('billingPurchase',[productId]).then(function (res) {
                     var purchase = {
@@ -167,7 +180,7 @@ inAppPurchases.purchase = function (productId){
                 })["catch"](reject);
             }
         } catch (err) {
-            return Promise.reject("Billing js error: "+err);
+            reject(inAppPurchases.utils.getJSError(err));
         }
     });
 }
@@ -184,7 +197,7 @@ inAppPurchases.getPrevPurchase = function (productId){
 inAppPurchases.getReciept = function (productId){
     return new Promise(function (resolve, reject) {
         if (!inAppPurchases.utils.validString(productId)) {
-            reject(new Error(inAppPurchases.utils.errors[102]));
+            return reject(inAppPurchases.utils.getError('product_id_string'));
         } else {
             nativeCall('bilingGetReceipt',[productId]).then(function (res) {
                 resolve(res);

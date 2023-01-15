@@ -43,12 +43,28 @@ if (!Array.prototype.find) {
  */
 var utils = {};
 utils.errors = {
-    101: 'invalid argument - productIds must be an array of strings',
-    102: 'invalid argument - productId must be a string',
-    103: 'invalid argument - product type must be a string',
-    104: 'invalid argument - receipt must be a string of a json',
-    105: 'invalid argument - signature must be a string'
+  'product_id_list' : { 101: 'invalid argument - productIds must be an array of strings'},
+  'product_id_string' : { 102: 'invalid argument - productId must be a string' },
+  'receipt_jsonstring' : { 103: 'invalid argument - receipt must be a string of a json'},
+  'signature_string' : { 104: 'invalid argument - signature must be a string' },
+  'billing_js_error' : { 111: 'billing js error' },
+  'not_implemented' : { 112: 'not implemented for this platform - iOS and Android only' }
 };
+utils.getError = function (errn){
+    //return new Error(utils.errors[code]);
+    var err = utils.errors[errn];
+    if (!err) err = { 110: errn };
+    var code = Object.keys(err)[0];
+    return {
+        'code' : code,
+        'message' : err[code]
+    };
+}
+utils.getJSError = function (err){
+    var e = utils.getError('billing_js_error');
+    e['message'] += ": "+err;
+    return e;
+}
 utils.validArrayOfStrings = function (val) {
     return val && Array.isArray(val) && val.length > 0 && !val.find(function (i) {
         return !i.length || typeof i !== 'string';
@@ -57,7 +73,7 @@ utils.validArrayOfStrings = function (val) {
 utils.validString = function (val) {
     return val && val.length && typeof val === 'string';
 };
-utils.chunk = function (array, size) {
+/*utils.chunk = function (array, size) {
     console.log(array);
     console.log(size);
     if (!Array.isArray(array)) throw new Error('Invalid array');
@@ -87,7 +103,7 @@ utils.chunkProductIds = function (productIds) {
  * github.com/alexdisler/cordova-plugin-inapppurchase
  * Licensed under the MIT license. Please see README for more information.
  */
-var inAppPurchases = { utils: utils };
+var inAppPurchases = { utils: utils, purchases: {} };
 
 var createIapError = function createIapError(reject) {
     return function () {
@@ -97,7 +113,7 @@ var createIapError = function createIapError(reject) {
     };
 };
 
-var nativeCall = function nativeCall(name) {
+var nativeCall = function nativeCall(name,arguments) {
     var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
     if (!window.cordova.exec) return Promise.reject("Cannot access inAppBilling for this platform");
     return new Promise(function (resolve, reject) {
@@ -113,7 +129,7 @@ inAppPurchases.getAllProductInfo = function(productIds){
     try {
         return new Promise(function (resolve, reject) {
             if (!inAppPurchases.utils.validArrayOfStrings(productIds)) {
-                reject(new Error(inAppPurchases.utils.errors[101]));
+                reject(inAppPurchases.utils.getError('product_id_list'));
             } else {
                 //console.log("chunking");
                 //console.log(productIds);
@@ -148,7 +164,7 @@ inAppPurchases.getAllProductInfo = function(productIds){
             }
         });
     } catch (err){
-        return Promise.reject("Billing js error: "+err);
+        return Promise.reject(inAppPurchases.utils.getJSError(err));
     }
 }
 
@@ -170,7 +186,7 @@ inAppPurchases.getPurchases = function(){
             });
             return Promise.resolve(arr);
         } catch (err) {
-            return Promise.reject("Billing js error: "+err);
+            return Promise.reject(inAppPurchases.utils.getJSError(err));
         }
     });
 }
@@ -193,7 +209,7 @@ inAppPurchases.restorePurchases = function(){
             });
             return Promise.resolve(arr);
         } catch (err) {
-            return Promise.reject("Billing js error: "+err);
+            return Promise.reject(inAppPurchases.utils.getJSError(err));
         }
     });
 }
@@ -201,7 +217,7 @@ inAppPurchases.restorePurchases = function(){
 inAppPurchases.purchase = function (productId){
     return new Promise(function (resolve, reject) {
         if (!inAppPurchases.utils.validString(productId)) {
-            reject(new Error(inAppPurchases.utils.errors[102]));
+            reject(inAppPurchases.utils.getError('product_id_string'));
         } else {
             nativeCall('billingPurchase',[productId]).then(function (res) {
                 resolve({
@@ -222,7 +238,7 @@ inAppPurchases.purchase = function (productId){
 inAppPurchases.completePurchase = function (productId, consume = false){
     return new Promise(function (resolve, reject) {
         if (!inAppPurchases.utils.validString(productId)) {
-            reject(new Error(inAppPurchases.utils.errors[102]));
+            reject(inAppPurchases.utils.getError('product_id_string'));
         } else {
             nativeCall('billingCompletePurchase',[productId,consume]).then(function (res) {
                 resolve({
@@ -241,8 +257,13 @@ inAppPurchases.completePurchase = function (productId, consume = false){
 }
 
 inAppPurchases.getReciept = function (productId){
-    return Promise.resolve();
-}
+    return new Promise(function (resolve, reject) {
+        if (!inAppPurchases.utils.validString(productId)) {
+            return reject(inAppPurchases.utils.getError('product_id_string'));
+        } else {
+            return resolve();
+        }
+    });}
 
 module.exports = inAppPurchases;
 
