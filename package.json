@@ -1,7 +1,10 @@
 {
   "name": "cordova-plugin-inapppurchases",
-  "version": "1.0.4",
-  "author": "CozyCode <hello@cozycode.ca>",
+  "version": "2.0.0",
+  "author": {
+    "name": "CozyCode",
+    "email": "hello@cozycode.ca"
+  },
   "description": "Cordova plugin to add in-app-purchases (and subscriptions) into an app, use javascript to view, make, and complete purchases.",
   "main": "ios/ios-index.js",
   "scripts": {
@@ -46,10 +49,6 @@
     "url": "https://github.com/cozycodegh/cordova-plugin-inapppurchases/issues"
   },
   "homepage": "https://github.com/cozycodegh/cordova-plugin-inapppurchases#readme",
-  "author": {
-    "name": "CozyCode",
-    "email": "hello@cozycode.ca"
-  },
   "devDependencies": {
     "@babel/core": "^7.15.8",
     "@babel/plugin-transform-async-to-generator": "^7.14.5",
