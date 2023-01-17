@@ -3,7 +3,7 @@
 Updated __2023__ for [Cordova](https://cordova.apache.org/) with current:<br>
 __Android__: *Billing Library 5* (released May 2022) (verifies receipts internally)<br>
 __iOS__: *StoreKit* (not StoreKit 2, released 2021, which is only available for iOS 15 and up) (does not verify receipts currently - but returns them)<br>
-__Amazon Fire__: compatible, but untested <br>
+__Amazon Fire__: co ampatible, but untested <br>
 __Browser__: not implemented<br>
 __Windows__: not implemented <br>
 
@@ -33,8 +33,7 @@ The plugin creates an `inAppPurchases` object which can make calls to the store.
 # Testing App
 
 After creating [App Store and Google Play accounts and in-app products](#testing-tips), this app can test purchases. <br/>
-Download test app here:
-[cordova-plugin-inapppurchases Test App](https://github.com/cozycodegh/cordova-plugin-inapppurchases_TESTAPP)
+Download test app here: [cordova-plugin-inapppurchases Test App](https://github.com/cozycodegh/cordova-plugin-inapppurchases_TESTAPP)
 <p align="center">
 <img src="docs/browser_test.png" alt="" width="300" align="center" />
 </p>
@@ -42,15 +41,14 @@ Download test app here:
 # Demo App
 
 This app shows how to use this plugin to load and make purchases in a [Cordova](https://cordova.apache.org/) app:<br/>
-Download test app here:
-[cordova-plugin-inapppurchases Demo App](https://github.com/cozycodegh/cordova-plugin-inapppurchases_DEMOAPP)
+Download demo app here: [cordova-plugin-inapppurchases Demo App](https://github.com/cozycodegh/cordova-plugin-inapppurchases_DEMOAPP)
 <p align="center">
 <img src="docs/browser_demo.png" alt="" width="300" align="center" />
 </p>
 
 # CREATE AN APP WITH CORDOVA
 
-How to create a cordova app: <br>
+How to create a Cordova app: <br>
 ```properties
 npm install -g cordova
 cordova create directory_name com.your_name_or_company.your_app_name
@@ -111,13 +109,20 @@ see [common error messages](docs/errors.md) to handle other results
 3. create test accounts in the TestFlight section of App Store Connect 
 4. now you can log in to test accounts in the test device's settings, or the prompt that comes up in a simulator and test out in-app purchases
     * you should be able to test without having to submit your app for review
-
+  
 # Future Improvements
 - [ ] add internal receipt checking for iOS
 - [ ] update to also include Storekit 2
 - [ ] support Windows apps
 - [x] tested working 2023 with Google Play Billing Library 5 for consumables, non-consumables, and subscriptions
 - [x] tested working 2023 with StoreKit for consumables, non-consumables, and subscriptions
+
+# More from [cozycode.ca](https://cozycode.ca)
+
+  * [make apps with JavaScript](https://cozycode.ca/post?pon=make-an-app-with-cordova)
+  * [how to make an in-app purchases with Cordova](https://cozycode.ca/post?pon=cordova-plugin-inapppurchases)
+  * [a testing app for in-app purchases](https://cozycode.ca/post?pon=cordova-plugin-inapppurchases-TEST-APP)
+  * [a demo app for in-app purchases](https://cozycode.ca/post?pon=cordova-plugin-inapppurchase-DEMO-APP)
 
 # Open Source License
 
