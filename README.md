@@ -122,7 +122,7 @@ see [common error messages](docs/errors.md) to handle other results
   * [make apps with JavaScript](https://cozycode.ca/post?pon=make-an-app-with-cordova)
   * [how to make an in-app purchases with Cordova](https://cozycode.ca/post?pon=cordova-plugin-inapppurchases)
   * [a testing app for in-app purchases](https://cozycode.ca/post?pon=cordova-plugin-inapppurchases-TEST-APP)
-  * [a demo app for in-app purchases](https://cozycode.ca/post?pon=cordova-plugin-inapppurchase-DEMO-APP)
+  * [a demo app for in-app purchases](https://cozycode.ca/post?pon=cordova-plugin-inapppurchases-DEMO-APP)
 
 # Open Source License
 
