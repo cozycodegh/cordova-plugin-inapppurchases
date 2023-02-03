@@ -3,7 +3,7 @@
 ## Usage:
 ```js
 inAppPurchases.purchase(productId).then(function (purchase) {
-    if (purchase[i]["pending"]) return; //not paid for yet, complete later
+    if (purchase["pending"]) return; //not paid for yet, complete later
     // handle purchase
     // complete purchase next
     return inAppPurchases.completePurchase(productId);
@@ -69,7 +69,7 @@ Some errors can be retried automatically, otherwise could display an error messa
 ```js
 function buyRemoveAds(){
     inAppPurchases.purchase(ads_remove_id).then( function(purchase){
-        if (purchase[i]["pending"]) continue; //not paid for yet
+        if (purchase["pending"]) continue; //not paid for yet
         // handle purchase here, or after its been completed:
         removeAds();
         return inAppPurchases.completePurchase(purchase["productId"]);
