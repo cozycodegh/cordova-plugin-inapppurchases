@@ -246,7 +246,7 @@ public class InAppBilling extends CordovaPlugin {
     @Override
     public boolean execute(String action, final JSONArray args, final CallbackContext callbackContext) {
         try {
-            if (iabHelper != null) iabHelper.logInfo(TAG+ " "+"executing "+ action);
+            if (iabHelper != null) iabHelper.logInfo(TAG+ " "+"executing "+ action+" with "+Integer.toString(args.length())+" arguments");
             int funcNum = stringArrayIndex(API_ALL_FUNCS, action);
             if (funcNum == -1){
                 callbackContext.error(makeError("Invalid API Request: "+action, INVALID_ARGUMENTS));

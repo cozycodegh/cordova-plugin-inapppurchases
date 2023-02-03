@@ -107,25 +107,23 @@ public class IabNext  {
     public String getArgsProductId(boolean force){
         if (mArgsProductId != null) return mArgsProductId;
         String productId;
-        try {
-            productId = args.getString(0);
-            //if (args.length() > 1) { developerPayload = args.getString(1); }
-        } catch (JSONException e) {
-            inAppBilling.iabHelper.flagEndAsync();
-            callbackContext.error(inAppBilling.makeError("Invalid Product ID", inAppBilling.INVALID_ARGUMENTS));
-            return null;
-        }
-        mArgsProductId = productId;
-        if (force){
-            boolean empty = false;
-            if (mArgsProductId == null) empty = true;
-            else if (mArgsProductId.length() == 0) empty = true;
-            if (empty){
+        if (args.length() == 0){
+            if (force){
                 inAppBilling.iabHelper.flagEndAsync();
                 callbackContext.error(inAppBilling.makeError("Invalid Product ID Argument - Missing Product Id Argument", inAppBilling.INVALID_ARGUMENTS));
+            }
+            return null;
+        } else {
+            try {
+                productId = args.getString(0);
+                //if (args.length() > 1) { developerPayload = args.getString(1); }
+            } catch (JSONException e) {
+                inAppBilling.iabHelper.flagEndAsync();
+                callbackContext.error(inAppBilling.makeError("Unreadable Product ID "+e.toString(), inAppBilling.INVALID_ARGUMENTS));
                 return null;
             }
         }
+        mArgsProductId = productId;
         return mArgsProductId;
     }
     public boolean getArgsConsumable(){

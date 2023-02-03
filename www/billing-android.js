@@ -113,13 +113,13 @@ var createIapError = function createIapError(reject) {
     };
 };
 
-var nativeCall = function nativeCall(name,arguments) {
+var nativeCall = function nativeCall(name) {
     var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
     if (!window.cordova.exec) return Promise.reject("Cannot access inAppBilling for this platform");
     return new Promise(function (resolve, reject) {
         window.cordova.exec(function (res) {
             resolve(res);
-        }, createIapError(reject), 'InAppBilling', name, args)
+        }, createIapError(reject), 'InAppBilling', name, args);
     });
 };
 

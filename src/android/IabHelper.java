@@ -300,7 +300,7 @@ public class IabHelper implements PurchasesUpdatedListener {
         if (responseCode == BillingClient.BillingResponseCode.BILLING_UNAVAILABLE){
             return new IabResult(BillingClient.BillingResponseCode.BILLING_UNAVAILABLE, "Billing response error: A user billing error occurred during processing. "+moreInfo);
         } else if (responseCode == BillingClient.BillingResponseCode.DEVELOPER_ERROR){
-            return new IabResult(BillingClient.BillingResponseCode.DEVELOPER_ERROR, "Billing response error: Internal Error resulting from incorrect usage of the API. Possibly manifest.json key is incorrect an arugment was not supplied when required... "+moreInfo);
+            return new IabResult(BillingClient.BillingResponseCode.DEVELOPER_ERROR, "Billing response error: Internal Error resulting from incorrect usage of the API. Possibly manifest.json key is incorrect an argument was not supplied when required... Can also happen when the app is not set up to run purchases from the Google Play Store settings."+moreInfo);
         } else if (responseCode == BillingClient.BillingResponseCode.ERROR){
             return new IabResult(BillingClient.BillingResponseCode.ERROR, "Billing response error: Fatal error during the API action. "+moreInfo);
         } else if (responseCode == BillingClient.BillingResponseCode.FEATURE_NOT_SUPPORTED){
