@@ -86,6 +86,7 @@ public class InAppBilling extends CordovaPlugin {
     protected IabInventory iabHelperInventory = new IabInventory();
     boolean billingInitialized = false;
     AtomicInteger orderSerial = new AtomicInteger(0);
+    protected CallbackContext currentCallbackContext = null;
     
     private JSONObject manifestObject = null;
 
@@ -240,12 +241,22 @@ public class InAppBilling extends CordovaPlugin {
      */
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
-        super.initialize(cordova, webView);
-        initializeBillingHelper();
+        try {
+            super.initialize(cordova, webView);
+            initializeBillingHelper();
+        } catch (IllegalStateException ex){
+            if (iabHelper != null) iabHelper.logError("ERROR TOO MANY REQUESTS: only one billing operation is permitted at a time. "+ex);
+            if (currentCallbackContext == null) throw new RuntimeException("ERROR TOO MANY REQUESTS: only one billing operation is permitted at a time. "+ex;
+        } catch (Exception ex){
+            if (iabHelper != null) iabHelper.logError("UNKNOWN ERROR: initializing, "+ex);
+            if (currentCallbackContext == null) throw new RuntimeException("UNKNOWN_ERROR: initializing, "+ex);
+            return false;
+        }
     }
     @Override
     public boolean execute(String action, final JSONArray args, final CallbackContext callbackContext) {
         try {
+            currentCallbackContext = callbackContext;
             if (iabHelper != null) iabHelper.logInfo(TAG+ " "+"executing "+ action+" with "+Integer.toString(args.length())+" arguments");
             int funcNum = stringArrayIndex(API_ALL_FUNCS, action);
             if (funcNum == -1){
@@ -261,15 +272,27 @@ public class InAppBilling extends CordovaPlugin {
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (!iabHelper.handleActivityResult(requestCode, resultCode, intent)) {
-            super.onActivityResult(requestCode, resultCode, intent);
+        try {
+            if (!iabHelper.handleActivityResult(requestCode, resultCode, intent)) {
+                super.onActivityResult(requestCode, resultCode, intent);
+            }
+        } catch (Exception ex){
+            if (currentCallbackContext != null) currentCallbackContext.error(makeError("UNKNOWN_ERROR: in activity result, "+ex, UNKNOWN_ERROR));
+            if (iabHelper != null) iabHelper.logError("UNKNOWN ERROR: in activity result, "+ex);
+            return false;
         }
     }
     @Override
     public void onDestroy() {
-        if (iabHelper != null) iabHelper.dispose();
-        iabHelper = null;
-        billingInitialized = false;
+        try {
+            if (iabHelper != null) iabHelper.dispose();
+            iabHelper = null;
+            billingInitialized = false;
+        } catch (Exception ex){
+            if (currentCallbackContext != null) currentCallbackContext.error(makeError("UNKNOWN_ERROR: when closing, "+ex, UNKNOWN_ERROR));
+            if (iabHelper != null) iabHelper.logError("UNKNOWN ERROR: when closing, "+ex);
+            return false;
+        }
     }
     
     /**
