@@ -6,7 +6,7 @@ jump to: [PLUGIN USAGE](#plugin-usage) | [Testing App](#testing-app) | [Demo App
 Updated __2023__ for [Cordova](https://cordova.apache.org/) with current:<br>
 __Android__: *Billing Library 5* (released May 2022) (verifies receipts internally)<br>
 __iOS__: *StoreKit* (not StoreKit 2, released 2021, which is only available for iOS 15 and up) (does not verify receipts currently - but returns them)<br>
-__Amazon Fire__: co ampatible, but untested <br>
+__Amazon Fire__: compatible, but untested <br>
 __Browser__: not implemented<br>
 __Windows__: not implemented <br>
 
