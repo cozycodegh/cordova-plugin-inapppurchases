@@ -48,7 +48,7 @@
   "bugs": {
     "url": "https://github.com/cozycodegh/cordova-plugin-inapppurchases/issues"
   },
-  "homepage": "https://github.com/cozycodegh/cordova-plugin-inapppurchases#readme",
+  "homepage": "https://cozycode.ca/post?pon=cordova-plugin-inapppurchases",
   "devDependencies": {
     "@babel/core": "^7.15.8",
     "@babel/plugin-transform-async-to-generator": "^7.14.5",
