@@ -68,20 +68,20 @@ public class IabNext  {
         if (inAppBilling.iabHelper == null) return;
         inAppBilling.iabHelper.logWarning("InAppBilling next not implemented");
         inAppBilling.iabHelper.flagEndAsync();
-        callbackContext.error(inAppBilling.makeError("Developer Billing Error: InAppBilling's OnNext not implemented", inAppBilling.UNKNOWN_ERROR));
+        callbackContext.error(inAppBilling.makeError(inAppBilling.UNKNOWN_ERROR, "Developer Billing Error: InAppBilling's OnNext not implemented"));
     }
     public void OnNext(IabResult result, IabInventory inventory){
         if (inAppBilling == null) return;
         if (inAppBilling.iabHelper == null) return;
         inAppBilling.iabHelper.logWarning("InAppBilling next not implemented");
         inAppBilling.iabHelper.flagEndAsync();
-        callbackContext.error(inAppBilling.makeError("Developer Billing Error: InAppBilling's OnNext was not implemented", inAppBilling.UNKNOWN_ERROR));
+        callbackContext.error(inAppBilling.makeError(inAppBilling.UNKNOWN_ERROR, "Developer Billing Error: InAppBilling's OnNext was not implemented"));
     }
     //error - error back to cordova
     public void OnError(boolean endAsync, int errorCode, String appendStr){
         setErrorInfo(errorCode, appendStr);
         if (endAsync) inAppBilling.iabHelper.flagEndAsync();
-        callbackContext.error(inAppBilling.makeError(mFailAppendMessage, mFailErrorCode));
+        callbackContext.error(inAppBilling.makeError(mFailErrorCode,mFailAppendMessage));
     }
     public void OnError(IabResult result){ //finished operation and do not need to dispose
         if (inAppBilling.iabHelper != null){
@@ -110,7 +110,7 @@ public class IabNext  {
         if (args.length() == 0){
             if (force){
                 inAppBilling.iabHelper.flagEndAsync();
-                callbackContext.error(inAppBilling.makeError("Invalid Product ID Argument - Missing Product Id Argument", inAppBilling.INVALID_ARGUMENTS));
+                callbackContext.error(inAppBilling.makeError(inAppBilling.INVALID_ARGUMENTS,"Invalid Product ID Argument - Missing Product Id Argument"));
             }
             return null;
         } else {
@@ -119,7 +119,7 @@ public class IabNext  {
                 //if (args.length() > 1) { developerPayload = args.getString(1); }
             } catch (JSONException e) {
                 inAppBilling.iabHelper.flagEndAsync();
-                callbackContext.error(inAppBilling.makeError("Unreadable Product ID "+e.toString(), inAppBilling.INVALID_ARGUMENTS));
+                callbackContext.error(inAppBilling.makeError(inAppBilling.INVALID_ARGUMENTS,"Unreadable Product ID "+e.toString()));
                 return null;
             }
         }
@@ -135,7 +135,7 @@ public class IabNext  {
             inAppBilling.iabHelper.logError("No args consumable was found");
             if (force){
                 inAppBilling.iabHelper.flagEndAsync();
-                callbackContext.error(inAppBilling.makeError("Missing 2nd argument, consume", inAppBilling.INVALID_ARGUMENTS));
+                callbackContext.error(inAppBilling.makeError(inAppBilling.INVALID_ARGUMENTS, "Missing 2nd argument, consume"));
                 return false;
             }
             return false;
@@ -146,7 +146,7 @@ public class IabNext  {
             //if (args.length() > 1) { developerPayload = args.getString(1); }
         } catch (JSONException e) {
             inAppBilling.iabHelper.flagEndAsync();
-            callbackContext.error(inAppBilling.makeError("Invalid consume argument"+e.toString(), inAppBilling.INVALID_ARGUMENTS));
+            callbackContext.error(inAppBilling.makeError(inAppBilling.INVALID_ARGUMENTS, "Invalid consume argument"+e.toString()));
             return false;
         }
         mArgsConsumable = consumable;
@@ -164,7 +164,7 @@ public class IabNext  {
                 //if (inAppBilling.iabHelper != null) inAppBilling.iabHelper.logInfo("read in product id:" + args.getString(i));
             } catch (JSONException e) {
                 inAppBilling.iabHelper.flagEndAsync();
-                callbackContext.error(inAppBilling.makeError("Invalid Product ID (#"+Integer.toString(i)+")", inAppBilling.INVALID_ARGUMENTS));
+                callbackContext.error(inAppBilling.makeError(inAppBilling.INVALID_ARGUMENTS,"Invalid Product ID (#"+Integer.toString(i)+")"));
                 return null;
             }
         }
@@ -175,7 +175,7 @@ public class IabNext  {
             else if (mArgsProductIds.size() == 0) empty = true;
             if (empty){
                 inAppBilling.iabHelper.flagEndAsync();
-                callbackContext.error(inAppBilling.makeError("Invalid Product ID List Argument - Missing Product Ids in List Argument", inAppBilling.INVALID_ARGUMENTS));
+                callbackContext.error(inAppBilling.makeError(inAppBilling.INVALID_ARGUMENTS,"Invalid Product ID List Argument - Missing Product Ids in List Argument"));
                 return null;
             }
         }

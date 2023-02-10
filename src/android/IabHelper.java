@@ -130,6 +130,7 @@ public class IabHelper implements PurchasesUpdatedListener {
     public static final int IABHELPER_INVALID_CONSUMPTION = -1010;
     public static final int IABHELPER_BAD_ARGUMENT = -1011;
     public static final int IABHELPER_BILLING_UNEXPECTED_DISCONNECT = -1012;
+    public static final int IABHELPER_RECEIVED_ERROR = -1013;
 
     // Main
     public IabHelper(Context ctx, String base64PublicKey, boolean extra_debug) {
@@ -295,32 +296,31 @@ public class IabHelper implements PurchasesUpdatedListener {
         return getIabResultFromBillingResult(billingResult, "");
     }
     public IabResult getIabResultFromBillingResult(BillingResult billingResult, String addToErrorMsg){
-        String moreInfo = billingResult.getDebugMessage() + addToErrorMsg;
         int responseCode = billingResult.getResponseCode();
         if (responseCode == BillingClient.BillingResponseCode.BILLING_UNAVAILABLE){
-            return new IabResult(BillingClient.BillingResponseCode.BILLING_UNAVAILABLE, "Billing response error: A user billing error occurred during processing. "+moreInfo);
+            return new IabResult(IABHELPER_RECEIVED_ERROR, BillingClient.BillingResponseCode.BILLING_UNAVAILABLE, "Billing response error: A user billing error occurred during processing. "+addToErrorMsg,billingResult.getDebugMessage());
         } else if (responseCode == BillingClient.BillingResponseCode.DEVELOPER_ERROR){
-            return new IabResult(BillingClient.BillingResponseCode.DEVELOPER_ERROR, "Billing response error: Internal Error resulting from incorrect usage of the API. Possibly manifest.json key is incorrect an argument was not supplied when required... Can also happen when the app is not set up to run purchases from the Google Play Store settings."+moreInfo);
+            return new IabResult(IABHELPER_RECEIVED_ERROR, BillingClient.BillingResponseCode.DEVELOPER_ERROR, "Billing response error: Internal Error resulting from incorrect usage of the API. Possibly manifest.json key is incorrect an argument was not supplied when required... Can also happen when the app is not set up to run purchases from the Google Play Store settings."+addToErrorMsg,billingResult.getDebugMessage());
         } else if (responseCode == BillingClient.BillingResponseCode.ERROR){
-            return new IabResult(BillingClient.BillingResponseCode.ERROR, "Billing response error: Fatal error during the API action. "+moreInfo);
+            return new IabResult(IABHELPER_RECEIVED_ERROR, BillingClient.BillingResponseCode.ERROR, "Billing response error: Fatal error during the API action. "+addToErrorMsg,billingResult.getDebugMessage());
         } else if (responseCode == BillingClient.BillingResponseCode.FEATURE_NOT_SUPPORTED){
-            return new IabResult(BillingClient.BillingResponseCode.FEATURE_NOT_SUPPORTED, "Billing response error: The requested feature is not supported by the Play Store on the current device. "+moreInfo);
+            return new IabResult(IABHELPER_RECEIVED_ERROR, BillingClient.BillingResponseCode.FEATURE_NOT_SUPPORTED, "Billing response error: The requested feature is not supported by the Play Store on the current device. "+addToErrorMsg,billingResult.getDebugMessage());
         } else if (responseCode == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED){
-            return new IabResult(BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED, "Billing response error: The purchase failed because the item is already owned. "+moreInfo);
+            return new IabResult(IABHELPER_RECEIVED_ERROR, BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED, "Billing response error: The purchase failed because the item is already owned. "+addToErrorMsg,billingResult.getDebugMessage());
         } else if (responseCode == BillingClient.BillingResponseCode.ITEM_NOT_OWNED){
-            return new IabResult(BillingClient.BillingResponseCode.ITEM_NOT_OWNED, "Billing response error: Requested action on the item failed since it is not owned by the user. "+moreInfo);
+            return new IabResult(IABHELPER_RECEIVED_ERROR, BillingClient.BillingResponseCode.ITEM_NOT_OWNED, "Billing response error: Requested action on the item failed since it is not owned by the user. "+addToErrorMsg,billingResult.getDebugMessage());
         } else if (responseCode == BillingClient.BillingResponseCode.ITEM_UNAVAILABLE){
-            return new IabResult(BillingClient.BillingResponseCode.ITEM_UNAVAILABLE, "Billing response error: The requested product is not available for purchase. "+moreInfo);
+            return new IabResult(IABHELPER_RECEIVED_ERROR, BillingClient.BillingResponseCode.ITEM_UNAVAILABLE, "Billing response error: The requested product is not available for purchase. "+addToErrorMsg,billingResult.getDebugMessage());
         } else if (responseCode == BillingClient.BillingResponseCode.SERVICE_DISCONNECTED){
-            return new IabResult(BillingClient.BillingResponseCode.SERVICE_DISCONNECTED, "Billing response error: The app is not connected to the Play Store service via the Google Play Billing Library. "+moreInfo);
+            return new IabResult(IABHELPER_RECEIVED_ERROR, BillingClient.BillingResponseCode.SERVICE_DISCONNECTED, "Billing response error: The app is not connected to the Play Store service via the Google Play Billing Library. "+addToErrorMsg,billingResult.getDebugMessage());
         } else if (responseCode == BillingClient.BillingResponseCode.SERVICE_TIMEOUT){
-            return new IabResult(BillingClient.BillingResponseCode.SERVICE_TIMEOUT, "Billing response error: The request has reached the maximum timeout before Google Play responds. "+moreInfo);
+            return new IabResult(IABHELPER_RECEIVED_ERROR, BillingClient.BillingResponseCode.SERVICE_TIMEOUT, "Billing response error: The request has reached the maximum timeout before Google Play responds. "+addToErrorMsg,billingResult.getDebugMessage());
         } else if (responseCode == BillingClient.BillingResponseCode.SERVICE_UNAVAILABLE){
-            return new IabResult(BillingClient.BillingResponseCode.SERVICE_UNAVAILABLE, "Billing response error: The service is currently unavailable. "+moreInfo);
+            return new IabResult(IABHELPER_RECEIVED_ERROR, BillingClient.BillingResponseCode.SERVICE_UNAVAILABLE, "Billing response error: The service is currently unavailable. "+addToErrorMsg,billingResult.getDebugMessage());
         } else if (responseCode == BillingClient.BillingResponseCode.USER_CANCELED){
-            return new IabResult(BillingClient.BillingResponseCode.USER_CANCELED, "Billing response error: Transaction was canceled by the user. "+moreInfo);
+            return new IabResult(IABHELPER_RECEIVED_ERROR, BillingClient.BillingResponseCode.USER_CANCELED, "Billing response error: Transaction was canceled by the user. "+addToErrorMsg,billingResult.getDebugMessage());
         } else if (responseCode != BillingClient.BillingResponseCode.OK){
-            return new IabResult(IABHELPER_UNKNOWN_ERROR, "Billing response error: An unknown billing error occurred. "+moreInfo);
+            return new IabResult(IABHELPER_UNKNOWN_ERROR, "Billing response error: An unknown billing error occurred. "+addToErrorMsg,billingResult.getDebugMessage());
         }
         return new IabResult();
     }
@@ -356,6 +356,7 @@ public class IabHelper implements PurchasesUpdatedListener {
         else if (code == IABHELPER_INVALID_CONSUMPTION) err = "IAB Helper Error: Invalid consumption attempt";
         else if (code == IABHELPER_BAD_ARGUMENT) err = "IAB Helper Error: Invalid product id argument given";
         else if (code == IABHELPER_BILLING_UNEXPECTED_DISCONNECT) err = "IAB Helper Error: Unexpected billing disconnect";
+        else if (code == IABHELPER_RECEIVED_ERROR) err = "IAB RECEIVED ERROR";
         return err;
     }
     // Checks that setup was done; if not, throws an exception.
@@ -416,7 +417,7 @@ public class IabHelper implements PurchasesUpdatedListener {
     
     // helper - some calls to not return when no products given - queryProductDetailsAsync
     public void errorOnEmptyProductList(IabNext next){
-        next.OnError(new IabResult(IABHELPER_BAD_ARGUMENT, "IAB ERROR: empty product id list, please request with a list of product ids - "+next.getArgsProductIds().toString()));
+        next.OnError(new IabResult(IABHELPER_BAD_ARGUMENT, "please request with a list of product ids - "+next.getArgsProductIds().toString()));
     }
     
     /* Initialize billing client and connect */
@@ -454,7 +455,7 @@ public class IabHelper implements PurchasesUpdatedListener {
                         next.OnNext(new IabResult(BillingClient.BillingResponseCode.OK, "Setup successful.")); // next != null?
                     } catch (Exception e) {
                         logInfo("IAB BILLING ERROR: "+e);
-                        next.OnError(new IabResult(IABHELPER_UNKNOWN_ERROR, "IAB ERROR: "+e));
+                        next.OnError(new IabResult(IABHELPER_UNKNOWN_ERROR, e.toString()));
                         //throw new RuntimeException(e);
                     }
                 }
@@ -506,7 +507,7 @@ public class IabHelper implements PurchasesUpdatedListener {
                          next.OnNext(successResult, newInv);
                      } catch (Exception e){
                          logInfo("IAB BILLING ERROR: "+e);
-                         next.OnError(new IabResult(IABHELPER_UNKNOWN_ERROR, "IAB ERROR: "+e));
+                         next.OnError(new IabResult(IABHELPER_UNKNOWN_ERROR, e.toString()));
                      }
                  }
              });
@@ -528,7 +529,7 @@ public class IabHelper implements PurchasesUpdatedListener {
                                 mNext.OnNext(result);
                             } catch (Exception e){
                                 logInfo("IAB BILLING ERROR: "+e);
-                                next.OnError(new IabResult(IABHELPER_UNKNOWN_ERROR, "IAB ERROR: "+e));
+                                next.OnError(new IabResult(IABHELPER_UNKNOWN_ERROR, e.toString()));
                             }
                         }
                     };
@@ -536,7 +537,7 @@ public class IabHelper implements PurchasesUpdatedListener {
                     getProductDetailsAsync(nextCall2Complete, BillingClient.ProductType.SUBS);
                 } catch (Exception e){
                     logInfo("IAB BILLING ERROR: "+e);
-                    next.OnError(new IabResult(IABHELPER_UNKNOWN_ERROR, "IAB ERROR: "+e));
+                    next.OnError(new IabResult(IABHELPER_UNKNOWN_ERROR, e.toString()));
                 }
             }
         };
@@ -569,7 +570,7 @@ public class IabHelper implements PurchasesUpdatedListener {
                       next.OnNext(successResult, newInv);
                   } catch (Exception e){
                       logInfo("BILLING ERROR: "+e);
-                      next.OnError(new IabResult(IABHELPER_UNKNOWN_ERROR, "IAB ERROR: "+e));
+                      next.OnError(new IabResult(IABHELPER_UNKNOWN_ERROR, e.toString()));
                   }
               }
             }
@@ -590,7 +591,7 @@ public class IabHelper implements PurchasesUpdatedListener {
                                 mNext.OnNext(result);
                             } catch (Exception e){
                                 logInfo("IAB BILLING ERROR: "+e);
-                                next.OnError(new IabResult(IABHELPER_UNKNOWN_ERROR, "IAB ERROR: "+e));
+                                next.OnError(new IabResult(IABHELPER_UNKNOWN_ERROR, e.toString()));
                             }
                         }
                     };
@@ -598,7 +599,7 @@ public class IabHelper implements PurchasesUpdatedListener {
                     restorePurchasesAsync(nextCall2Complete, BillingClient.ProductType.SUBS);
                 } catch (Exception e){
                     logInfo("IAB BILLING ERROR: "+e);
-                    next.OnError(new IabResult(IABHELPER_UNKNOWN_ERROR, "IAB ERROR: "+e));
+                    next.OnError(new IabResult(IABHELPER_UNKNOWN_ERROR, e.toString()));
                 }
             }
         };
@@ -687,7 +688,7 @@ public class IabHelper implements PurchasesUpdatedListener {
                     next.OnNext(successResult);
                 } catch (Exception e){
                     logInfo("BILLING ERROR: "+e);
-                    next.OnError(new IabResult(IABHELPER_UNKNOWN_ERROR, "IAB ERROR: "+e));
+                    next.OnError(new IabResult(IABHELPER_UNKNOWN_ERROR, e.toString()));
                 }
             }});
             
@@ -715,7 +716,7 @@ public class IabHelper implements PurchasesUpdatedListener {
                     next.OnNext(successResult);
                 } catch (Exception e){
                     logInfo("BILLING ERROR: "+e);
-                    next.OnError(new IabResult(IABHELPER_UNKNOWN_ERROR, "IAB ERROR: "+e));
+                    next.OnError(new IabResult(IABHELPER_UNKNOWN_ERROR, e.toString()));
                 }
             }
         });

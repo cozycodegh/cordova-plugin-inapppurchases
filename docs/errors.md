@@ -6,9 +6,10 @@ Errors will either be in string format for unexpected errors, or an error object
 ```
 - error["code"]         //error code (always included in plugin error objects) 
 - error["message"]      //error message (always included in plugin error objects)
-- error["responseCode"] //another error code from Google Play billing response 
-- error["iabText"]      //another error message from the billing api description of the error
+- error["responseCode"] //error code from Google Play billing response 
+- error["responseMessage"] //error message from Google Play billing response
 - error["iabCode"]      //error code from billing api usage
+- error["iabText"]      //description of billing api error
 ```
 
 ## List of common in app purchase errors with billing: <a id="common-errors"></a>

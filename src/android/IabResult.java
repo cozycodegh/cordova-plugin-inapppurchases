@@ -28,26 +28,44 @@ import com.android.billingclient.api.BillingClient.BillingResponseCode;
  * calling {@link #isSuccess()} and {@link #isFailure()}.
  */
 public class IabResult {
-    int mResponse;
+    
+    int mIabCode;
     String mMessage;
+    int mResponseCode;
+    String mResponseMessage;
 
-    public IabResult(int response, String message) {
-        mResponse = response;
-        mMessage = message;
-        String iabHelperMessage = IabHelper.getIabHelperErrorMessage(mResponse);
-        if (iabHelperMessage != null){
-            if (mMessage.length() == 0) mMessage = iabHelperMessage;
-            else mMessage += "... ("+iabHelperMessage+")";
-        }
+    public IabResult(int iabCode, String message) {
+        setResult(iabCode,message);
+    }
+    public IabResult(int iabCode, String message, String responseMessage) {
+        setResult(iabCode,message);
+        mResponseMessage = responseMessage;
+    }
+    public IabResult(int iabCode, int responseCode, String message, String responseMessage) {
+        setResult(iabCode,message);
+        mResponseCode = responseCode;
+        mResponseMessage = responseMessage;
     }
     public IabResult(){
-        mResponse = BillingResponseCode.OK;
+        mResponseCode = BillingResponseCode.OK;
         mMessage = "Billing query was successful";
     }
+    private void setResult(int iabCode, String message){
+        mIabCode = iabCode;
+        mMessage = message;
+        String iabHelperMessage = IabHelper.getIabHelperErrorMessage(mIabCode);
+        if (iabHelperMessage != null){
+            if (mMessage.length() == 0) mMessage = iabHelperMessage;
+            else mMessage = iabHelperMessage+" - "+mMessage;
+        }
+    }
     
-    public int getResponse() { return mResponse; }
+    public int getIabCode() { return mIabCode; }
+    public int getResponseCode() { return mResponseCode; }
     public String getMessage() { return mMessage; }
-    public boolean isSuccess() { return mResponse == BillingResponseCode.OK; }
+    public boolean hasResponseMessage() { return mResponseMessage != null; }
+    public String getResponseMessage() { return mResponseMessage; }
+    public boolean isSuccess() { return mResponseCode == BillingResponseCode.OK; }
     public boolean isFailure() { return !isSuccess(); }
     public String toString() { return "IabResult: " + getMessage(); }
 }

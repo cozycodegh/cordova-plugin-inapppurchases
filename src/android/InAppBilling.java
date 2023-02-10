@@ -70,6 +70,7 @@ public class InAppBilling extends CordovaPlugin {
     public static final int ITEM_NOT_OWNED = -10;
     public static final int CONSUME_FAILED = -11;
     public static final int GOOGLE_PLAY_KEY_ERROR = -12;
+    public static final int[] BILLING_ERRORS = {INVALID_ARGUMENTS, UNABLE_TO_INITIALIZE, BILLING_NOT_INITIALIZED, UNKNOWN_ERROR, USER_CANCELLED, USER_CANCELLED, BAD_RESPONSE_FROM_SERVER, VERIFICATION_FAILED, ITEM_UNAVAILABLE, ITEM_UNAVAILABLE, ITEM_ALREADY_OWNED, ITEM_NOT_OWNED, CONSUME_FAILED, GOOGLE_PLAY_KEY_ERROR};
 
     public static final int PURCHASE_PURCHASED = 0;
     public static final int PURCHASE_CANCELLED = 1;
@@ -169,12 +170,12 @@ public class InAppBilling extends CordovaPlugin {
     protected boolean debugManifestFailure(IabNext next){
         JSONObject manifestObject = getManifestContents();
         if (manifestObject == null){
-            if (next != null) next.callbackContext.error(makeError("Billing cannot be initialized: could not find www/manifest.json file with Google Play Billing Key", UNABLE_TO_INITIALIZE));
+            if (next != null) next.callbackContext.error(makeError(UNABLE_TO_INITIALIZE, "Billing cannot be initialized: could not find www/manifest.json file with Google Play Billing Key"));
             return true;
         }
         String base64EncodedPublicKey = getBase64EncodedPublicKey(next,true);
         if (base64EncodedPublicKey == null) {
-            if (next != null) next.callbackContext.error(makeError("Billing cannot be initialized: extracting Android billing key from www/manifest.json file", UNABLE_TO_INITIALIZE));
+            if (next != null) next.callbackContext.error(makeError(UNABLE_TO_INITIALIZE, "Billing cannot be initialized: extracting Android billing key from www/manifest.json file"));
             return true;
         }
         return false;
@@ -183,37 +184,62 @@ public class InAppBilling extends CordovaPlugin {
     /**
      * Error Handling
      */
-    protected JSONObject makeError(String message) {
-        return makeError(message, null, null, null);
+    protected JSONObject makeError(String title) {
+        return makeError(title, null, null, null, null, null);
     }
-    protected JSONObject makeError(String message, Integer resultCode) {
-        return makeError(message, resultCode, null, null);
+    protected JSONObject makeError(String title, Integer resultCode) {
+        return makeError(title, resultCode, null, null, null, null);
     }
-    protected JSONObject makeError(String message, Integer resultCode, IabResult result) {
-        return makeError(message, resultCode, result.getMessage(), result.getResponse());
+    protected JSONObject makeError(String title, Integer resultCode, String iabText) {
+        return makeError(title, resultCode, null, iabText, null, null);
     }
-    protected JSONObject makeError(String message, Integer resultCode, String text, Integer response) {
-        if (resultCode == INVALID_ARGUMENTS) message = "INVALID_ARGUMENTS "+message;
-        else if (resultCode == UNABLE_TO_INITIALIZE) message = "UNABLE_TO_INITIALIZE "+message;
-        else if (resultCode == BILLING_NOT_INITIALIZED) message = "BILLING_NOT_INITIALIZED "+message;
-        else if (resultCode == UNKNOWN_ERROR) message = "UNKNOWN_ERROR "+message;
-        else if (resultCode == USER_CANCELLED) message = "USER_CANCELLED "+message;
-        else if (resultCode == BAD_RESPONSE_FROM_SERVER) message = "BAD_RESPONSE_FROM_SERVER "+message;
-        else if (resultCode == VERIFICATION_FAILED) message = "VERIFICATION_FAILED "+message;
-        else if (resultCode == ITEM_UNAVAILABLE) message = "ITEM_UNAVAILABLE "+message;
-        else if (resultCode == ITEM_ALREADY_OWNED) message = "ITEM_ALREADY_OWNED "+message;
-        else if (resultCode == ITEM_NOT_OWNED) message = "ITEM_NOT_OWNED "+message;
-        else if (resultCode == CONSUME_FAILED) message = "CONSUME_FAILED "+message;
-        else if (resultCode == GOOGLE_PLAY_KEY_ERROR) message = "GOOGLE_PLAY_KEY_ERROR "+message;
-        if (message != null) {
-            if (iabHelper != null) iabHelper.logInfo("Error: " + message);
+    protected JSONObject makeError(Integer resultCode, String iabText){
+        return makeError(null, resultCode, null, iabText, null, null);
+    }
+    protected JSONObject makeError(Integer resultCode, IabResult result){
+        return makeError(null, resultCode, result.getIabCode(), result.getMessage(), result.getResponseCode(), result.getResponseMessage());
+    }
+    protected JSONObject makeError(Integer resultCode, String iabText, IabResult result){
+        return makeError(null, resultCode, result.getIabCode(), result.getMessage(), result.getResponseCode(), result.getResponseMessage());
+    }
+    protected JSONObject makeError(String title, Integer resultCode, IabResult result) {
+        return makeError(title, resultCode, result.getIabCode(), result.getMessage(), result.getResponseCode(), result.getResponseMessage());
+    }
+    protected JSONObject makeError(String title, Integer resultCode, Integer iabCode, String iabText, Integer responseCode, String responseMessage) {
+        if (intArrayIndex(BILLING_ERRORS, resultCode) > -1){
+            if (iabText == null) iabText = title;
+            else iabText = title + " " + iabText;
+            if (resultCode == INVALID_ARGUMENTS) title = "INVALID_ARGUMENTS";
+            else if (resultCode == UNABLE_TO_INITIALIZE) title = "UNABLE_TO_INITIALIZE";
+            else if (resultCode == BILLING_NOT_INITIALIZED) title = "BILLING_NOT_INITIALIZED";
+            else if (resultCode == UNKNOWN_ERROR && title == null) title = "UNKNOWN_ERROR";
+            else if (resultCode == USER_CANCELLED) title = "USER_CANCELLED";
+            else if (resultCode == BAD_RESPONSE_FROM_SERVER) title = "BAD_RESPONSE_FROM_SERVER";
+            else if (resultCode == VERIFICATION_FAILED) title = "VERIFICATION_FAILED";
+            else if (resultCode == ITEM_UNAVAILABLE) title = "ITEM_UNAVAILABLE";
+            else if (resultCode == ITEM_ALREADY_OWNED) title = "ITEM_ALREADY_OWNED";
+            else if (resultCode == ITEM_NOT_OWNED) title = "ITEM_NOT_OWNED";
+            else if (resultCode == CONSUME_FAILED) title = "CONSUME_FAILED";
+            else if (resultCode == GOOGLE_PLAY_KEY_ERROR) title = "GOOGLE_PLAY_KEY_ERROR";
+        } else if (title == null){
+            if (iabText != null) title = iabText;
+            else if (responseMessage != null) title = responseMessage;
+        }
+        if (title != null) {
+            if (iabHelper != null) iabHelper.logInfo("Error: " + title);
         }
         JSONObject error = new JSONObject();
         try {
+            if (resultCode == null){
+                if (iabCode != null) resultCode = iabCode;
+                else if (responseCode != null) resultCode = iabCode;
+            }
             if (resultCode != null) error.put("code", (int)resultCode);
-            if (message != null) error.put("message", message);
-            if (text != null) error.put("iabText", text);
-            if (response != null) error.put("responseCode", response);
+            if (title != null) error.put("message", title);
+            if (iabCode != null) error.put("responseCode", iabCode);
+            if (iabText != null) error.put("iabText", iabText);
+            if (responseCode != null) error.put("responseCode", responseCode);
+            if (responseMessage != null) error.put("responseMessage", responseMessage);
         } catch (JSONException e) {
             if (iabHelper != null) iabHelper.logError("ERROR: while creating InAppBilling error "+e.toString());
         }
@@ -234,6 +260,14 @@ public class InAppBilling extends CordovaPlugin {
         }
         return -1;
     }
+    private int intArrayIndex(int[] arr, Integer a){
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == a){
+                return i;
+            }
+        }
+        return -1;
+    }
 
     
     /**
@@ -246,11 +280,10 @@ public class InAppBilling extends CordovaPlugin {
             initializeBillingHelper();
         } catch (IllegalStateException ex){
             if (iabHelper != null) iabHelper.logError("ERROR TOO MANY REQUESTS: only one billing operation is permitted at a time. "+ex);
-            if (currentCallbackContext == null) throw new RuntimeException("ERROR TOO MANY REQUESTS: only one billing operation is permitted at a time. "+ex;
+            if (currentCallbackContext == null) throw new RuntimeException("ERROR TOO MANY REQUESTS: only one billing operation is permitted at a time. "+ex);
         } catch (Exception ex){
             if (iabHelper != null) iabHelper.logError("UNKNOWN ERROR: initializing, "+ex);
             if (currentCallbackContext == null) throw new RuntimeException("UNKNOWN_ERROR: initializing, "+ex);
-            return false;
         }
     }
     @Override
@@ -260,13 +293,13 @@ public class InAppBilling extends CordovaPlugin {
             if (iabHelper != null) iabHelper.logInfo(TAG+ " "+"executing "+ action+" with "+Integer.toString(args.length())+" arguments");
             int funcNum = stringArrayIndex(API_ALL_FUNCS, action);
             if (funcNum == -1){
-                callbackContext.error(makeError("Invalid API Request: "+action, INVALID_ARGUMENTS));
+                callbackContext.error(makeError(INVALID_ARGUMENTS, "Invalid API Request: "+action));
                 return false;
             }
             return startBillingAll(new IabNext(this, this.cordova.getActivity(), callbackContext, args, action){
                 public void OnNext(){ if (inAppBilling.iabHelper != null) inAppBilling.iabHelper.logWarning("shouldn't be here"); } });
         } catch (Exception ex){
-            callbackContext.error(makeError("UNKNOWN_ERROR: "+ex, UNKNOWN_ERROR));
+            callbackContext.error(makeError(UNKNOWN_ERROR, ex.toString()));
             return false;
         }
     }
@@ -277,9 +310,8 @@ public class InAppBilling extends CordovaPlugin {
                 super.onActivityResult(requestCode, resultCode, intent);
             }
         } catch (Exception ex){
-            if (currentCallbackContext != null) currentCallbackContext.error(makeError("UNKNOWN_ERROR: in activity result, "+ex, UNKNOWN_ERROR));
+            if (currentCallbackContext != null) currentCallbackContext.error(makeError(UNKNOWN_ERROR, "in activity result, "+ex));
             if (iabHelper != null) iabHelper.logError("UNKNOWN ERROR: in activity result, "+ex);
-            return false;
         }
     }
     @Override
@@ -289,9 +321,8 @@ public class InAppBilling extends CordovaPlugin {
             iabHelper = null;
             billingInitialized = false;
         } catch (Exception ex){
-            if (currentCallbackContext != null) currentCallbackContext.error(makeError("UNKNOWN_ERROR: when closing, "+ex, UNKNOWN_ERROR));
-            if (iabHelper != null) iabHelper.logError("UNKNOWN ERROR: when closing, "+ex);
-            return false;
+            if (currentCallbackContext != null) currentCallbackContext.error(makeError(UNKNOWN_ERROR,"when closing, "+ex));
+            if (iabHelper != null) iabHelper.logError("UNKNOWN ERROR: in activity result, "+ex);
         }
     }
     
@@ -324,10 +355,10 @@ public class InAppBilling extends CordovaPlugin {
                     try {
                         iabHelper.flagStartAsync(action); //end async only after this
                     } catch (IllegalStateException ex){
-                        next.callbackContext.error(makeError("ERROR TOO MANY REQUESTS: only one billing operation is permitted at a time. "+ex, UNKNOWN_ERROR));
+                        next.callbackContext.error(makeError("ERROR TOO MANY REQUESTS",UNKNOWN_ERROR,"Only one billing operation is permitted at a time. "+ex));
                     } catch (Exception ex){
                         if (iabHelper != null) iabHelper.flagEndAsync();
-                        next.callbackContext.error(makeError("UNKNOWN_ERROR: started initializing billing "+ex, UNKNOWN_ERROR));
+                        next.callbackContext.error(makeError(UNKNOWN_ERROR,"started initializing billing "+ex));
                     }
                     try {
                         if (API_GET_ALL_PRODUCT_INFO.equals(action)) {
@@ -342,15 +373,15 @@ public class InAppBilling extends CordovaPlugin {
                             inAppBilling.completePurchase(thisNext);
                         } else {
                             if (iabHelper != null) iabHelper.flagEndAsync();
-                            callbackContext.error(inAppBilling.makeError("Unhandled API Request: "+action, INVALID_ARGUMENTS));
+                            callbackContext.error(inAppBilling.makeError(INVALID_ARGUMENTS,"Unhandled API Request: "+action));
                         }
                     } catch (Exception ex){
                         if (iabHelper != null) iabHelper.flagEndAsync();
-                        next.callbackContext.error(makeError("UNKNOWN_ERROR: started initializing billing "+ex, UNKNOWN_ERROR));
+                        next.callbackContext.error(makeError(UNKNOWN_ERROR, "started initializing billing "+ex));
                     }
                 }});
         } catch (Exception ex){
-            next.callbackContext.error(makeError("UNKNOWN_ERROR: started initializing billing "+ex, UNKNOWN_ERROR));
+            next.callbackContext.error(makeError(UNKNOWN_ERROR,"started initializing billing "+ex));
             return false;
         }
     }
@@ -367,31 +398,31 @@ public class InAppBilling extends CordovaPlugin {
                 try {
                     new IabHelper(next.activityContext, base64EncodedPublicKey, Extra_Debug_Logging_Enabled);
                 } catch (Exception ex){
-                    if (next != null) next.callbackContext.error(makeError("Billing cannot be initialized: "+ex, UNABLE_TO_INITIALIZE));
+                    if (next != null) next.callbackContext.error(makeError(UNABLE_TO_INITIALIZE,"Billing cannot be initialized: "+ex));
                     return false;
                 }
-                next.callbackContext.error(makeError("Billing cannot be initialized", UNABLE_TO_INITIALIZE));
+                next.callbackContext.error(makeError(UNABLE_TO_INITIALIZE,"Billing cannot be initialized" ));
                 return false;
             } else {
                 iabHelper.initializeBillingClientAsync(new IabNext(next) {
                     public void OnNext(IabResult result) {
                         try {
                             if (!result.isSuccess()) {
-                                mNext.callbackContext.error(makeError("Unable to initialize billing: " + result.toString(), UNABLE_TO_INITIALIZE, result));
+                                mNext.callbackContext.error(makeError(UNABLE_TO_INITIALIZE, "Unable to initialize billing: " + result.toString(), result));
                             } else {
                                 if (iabHelper != null) iabHelper.logInfo("Billing initialized");
                                 billingInitialized = true;
                                 mNext.OnNext(); //callbackContext.success();
                             }
                         } catch (Exception ex){
-                            next.callbackContext.error(makeError("UNKNOWN_ERROR: "+ex, UNKNOWN_ERROR));
+                            next.callbackContext.error(makeError(UNKNOWN_ERROR,ex.toString()));
                             if (iabHelper != null) iabHelper.flagEndAsync();
                         }
                     }
                 });
             }
         } catch (Exception ex){
-            next.callbackContext.error(makeError("UNKNOWN_ERROR: initializing billing "+ex, UNKNOWN_ERROR));
+            next.callbackContext.error(makeError(UNKNOWN_ERROR,"initializing billing "+ex));
             return false;
         }
         return true;
@@ -400,7 +431,7 @@ public class InAppBilling extends CordovaPlugin {
     private void getBillingProductInfo(IabNext next){
         try {
             if (iabHelper == null || !billingInitialized) {
-                next.callbackContext.error(makeError("Billing is not initialized", BILLING_NOT_INITIALIZED));
+                next.callbackContext.error(makeError(BILLING_NOT_INITIALIZED,"Billing is not initialized" ));
                 if (iabHelper != null) iabHelper.flagEndAsync();
                 return;
             }
@@ -573,7 +604,7 @@ public class InAppBilling extends CordovaPlugin {
                                 if (thisNext.inAppBilling.iabHelper != null) thisNext.inAppBilling.iabHelper.flagEndAsync();
                                 this.callbackContext.success(purchaseJSONObject);
                             } catch (Exception ex){
-                                thisNext.callbackContext.error(makeError("UNKNOWN_ERROR: "+ex, UNKNOWN_ERROR));
+                                thisNext.callbackContext.error(makeError(UNKNOWN_ERROR, ex.toString()));
                                 if (iabHelper != null) iabHelper.flagEndAsync();
                             }
                         }
@@ -611,7 +642,7 @@ public class InAppBilling extends CordovaPlugin {
                                 if (thisNext.inAppBilling.iabHelper != null) thisNext.inAppBilling.iabHelper.flagEndAsync();
                                 this.callbackContext.success(purchaseJSONObject);
                             } catch (Exception ex){
-                                thisNext.callbackContext.error(makeError("UNKNOWN_ERROR: "+ex, UNKNOWN_ERROR));
+                                thisNext.callbackContext.error(makeError(UNKNOWN_ERROR, ex.toString()));
                                 if (iabHelper != null) iabHelper.flagEndAsync();
                             }
                         }
@@ -623,7 +654,7 @@ public class InAppBilling extends CordovaPlugin {
                     }
                     doBillingCompletePurchase(completeNext);
                 } catch (Exception ex){
-                    this.callbackContext.error(makeError("UNKNOWN_ERROR: "+ex, UNKNOWN_ERROR));
+                    this.callbackContext.error(makeError(UNKNOWN_ERROR, ex.toString()));
                     if (iabHelper != null) iabHelper.flagEndAsync();
                 }
             }
