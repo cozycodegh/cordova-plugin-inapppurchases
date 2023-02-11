@@ -50,7 +50,7 @@ import android.os.Bundle;
 
 public class InAppBilling extends CordovaPlugin {
     
-    boolean Extra_Debug_Logging_Enabled = true; //set to false for app store, asks for more permissions set these in the androidManfiest.xml too
+    boolean Extra_Debug_Logging_Enabled = false; //set to false for app store, asks for more permissions set these in the androidManfiest.xml too
  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
     
