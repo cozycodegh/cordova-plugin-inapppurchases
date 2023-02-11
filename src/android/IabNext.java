@@ -26,7 +26,7 @@ public class IabNext  {
     protected JSONArray args;
     protected String action;
     private int mFailErrorCode;
-    private String mFailAppendMessage = "InAppBilling Error";
+    private String mFailAppendMessage = "";
     private String mArgsProductId;
     private boolean mArgsConsumable;
     private List<String> mArgsProductIds;
@@ -82,6 +82,10 @@ public class IabNext  {
         setErrorInfo(errorCode, appendStr);
         if (endAsync) inAppBilling.iabHelper.flagEndAsync();
         callbackContext.error(inAppBilling.makeError(mFailErrorCode,mFailAppendMessage));
+    }
+    public void OnError(int errorCode, IabResult result){ //finished operation and do not need to dispose
+        mFailErrorCode = errorCode;
+        OnError(result);
     }
     public void OnError(IabResult result){ //finished operation and do not need to dispose
         if (inAppBilling.iabHelper != null){

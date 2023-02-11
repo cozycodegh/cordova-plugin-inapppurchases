@@ -50,7 +50,7 @@ import android.os.Bundle;
 
 public class InAppBilling extends CordovaPlugin {
     
-    boolean Extra_Debug_Logging_Enabled = false; //set to false for app store, asks for more permissions set these in the androidManfiest.xml too
+    boolean Extra_Debug_Logging_Enabled = true; //set to false for app store, asks for more permissions set these in the androidManfiest.xml too
  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
     
@@ -206,22 +206,28 @@ public class InAppBilling extends CordovaPlugin {
         return makeError(title, resultCode, result.getIabCode(), result.getMessage(), result.getResponseCode(), result.getResponseMessage());
     }
     protected JSONObject makeError(String title, Integer resultCode, Integer iabCode, String iabText, Integer responseCode, String responseMessage) {
+        if (resultCode == null){
+            if (iabCode != null) resultCode = iabCode;
+            else if (responseCode != null) resultCode = iabCode;
+        }
         if (intArrayIndex(BILLING_ERRORS, resultCode) > -1){
+            String new_title = "";
+            if (resultCode == INVALID_ARGUMENTS) new_title = "INVALID_ARGUMENTS";
+            else if (resultCode == UNABLE_TO_INITIALIZE) new_title = "UNABLE_TO_INITIALIZE";
+            else if (resultCode == BILLING_NOT_INITIALIZED) new_title = "BILLING_NOT_INITIALIZED";
+            else if (resultCode == UNKNOWN_ERROR && (title == null || title.length() == 0)) new_title = "UNKNOWN_ERROR";
+            else if (resultCode == USER_CANCELLED) new_title = "USER_CANCELLED";
+            else if (resultCode == BAD_RESPONSE_FROM_SERVER) new_title = "BAD_RESPONSE_FROM_SERVER";
+            else if (resultCode == VERIFICATION_FAILED) new_title = "VERIFICATION_FAILED";
+            else if (resultCode == ITEM_UNAVAILABLE) new_title = "ITEM_UNAVAILABLE";
+            else if (resultCode == ITEM_ALREADY_OWNED) new_title = "ITEM_ALREADY_OWNED";
+            else if (resultCode == ITEM_NOT_OWNED) new_title = "ITEM_NOT_OWNED";
+            else if (resultCode == CONSUME_FAILED) new_title = "CONSUME_FAILED";
+            else if (resultCode == GOOGLE_PLAY_KEY_ERROR) new_title = "GOOGLE_PLAY_KEY_ERROR";
             if (iabText == null) iabText = title;
-            else iabText = title + " " + iabText;
-            if (resultCode == INVALID_ARGUMENTS) title = "INVALID_ARGUMENTS";
-            else if (resultCode == UNABLE_TO_INITIALIZE) title = "UNABLE_TO_INITIALIZE";
-            else if (resultCode == BILLING_NOT_INITIALIZED) title = "BILLING_NOT_INITIALIZED";
-            else if (resultCode == UNKNOWN_ERROR && title == null) title = "UNKNOWN_ERROR";
-            else if (resultCode == USER_CANCELLED) title = "USER_CANCELLED";
-            else if (resultCode == BAD_RESPONSE_FROM_SERVER) title = "BAD_RESPONSE_FROM_SERVER";
-            else if (resultCode == VERIFICATION_FAILED) title = "VERIFICATION_FAILED";
-            else if (resultCode == ITEM_UNAVAILABLE) title = "ITEM_UNAVAILABLE";
-            else if (resultCode == ITEM_ALREADY_OWNED) title = "ITEM_ALREADY_OWNED";
-            else if (resultCode == ITEM_NOT_OWNED) title = "ITEM_NOT_OWNED";
-            else if (resultCode == CONSUME_FAILED) title = "CONSUME_FAILED";
-            else if (resultCode == GOOGLE_PLAY_KEY_ERROR) title = "GOOGLE_PLAY_KEY_ERROR";
-        } else if (title == null){
+            else if (title != new_title) iabText = title + " " + iabText;
+            title = new_title;
+        } else if (title == null || title.length() == 0){
             if (iabText != null) title = iabText;
             else if (responseMessage != null) title = responseMessage;
         }
@@ -230,15 +236,11 @@ public class InAppBilling extends CordovaPlugin {
         }
         JSONObject error = new JSONObject();
         try {
-            if (resultCode == null){
-                if (iabCode != null) resultCode = iabCode;
-                else if (responseCode != null) resultCode = iabCode;
-            }
             if (resultCode != null) error.put("code", (int)resultCode);
             if (title != null) error.put("message", title);
             if (iabCode != null) error.put("responseCode", iabCode);
             if (iabText != null) error.put("iabText", iabText);
-            if (responseCode != null) error.put("responseCode", responseCode);
+            if (responseMessage != null && responseCode != null) error.put("responseCode", responseCode);
             if (responseMessage != null) error.put("responseMessage", responseMessage);
         } catch (JSONException e) {
             if (iabHelper != null) iabHelper.logError("ERROR: while creating InAppBilling error "+e.toString());

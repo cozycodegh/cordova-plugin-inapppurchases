@@ -66,6 +66,19 @@ import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.ConsumeResponseListener;
 
 import static com.alexdisler_github_cozycode.inapppurchases.InAppBilling.BILLING_API_VERSION;
+import static com.alexdisler_github_cozycode.inapppurchases.InAppBilling.OK;
+import static com.alexdisler_github_cozycode.inapppurchases.InAppBilling.INVALID_ARGUMENTS;
+import static com.alexdisler_github_cozycode.inapppurchases.InAppBilling.UNABLE_TO_INITIALIZE;
+import static com.alexdisler_github_cozycode.inapppurchases.InAppBilling.BILLING_NOT_INITIALIZED;
+import static com.alexdisler_github_cozycode.inapppurchases.InAppBilling.UNKNOWN_ERROR;
+import static com.alexdisler_github_cozycode.inapppurchases.InAppBilling.USER_CANCELLED;
+import static com.alexdisler_github_cozycode.inapppurchases.InAppBilling.BAD_RESPONSE_FROM_SERVER;
+import static com.alexdisler_github_cozycode.inapppurchases.InAppBilling.VERIFICATION_FAILED;
+import static com.alexdisler_github_cozycode.inapppurchases.InAppBilling.ITEM_UNAVAILABLE;
+import static com.alexdisler_github_cozycode.inapppurchases.InAppBilling.ITEM_ALREADY_OWNED;
+import static com.alexdisler_github_cozycode.inapppurchases.InAppBilling.ITEM_NOT_OWNED;
+import static com.alexdisler_github_cozycode.inapppurchases.InAppBilling.CONSUME_FAILED;
+import static com.alexdisler_github_cozycode.inapppurchases.InAppBilling.GOOGLE_PLAY_KEY_ERROR;
 import com.alexdisler_github_cozycode.inapppurchases.IabNext;
 
 //adding
@@ -123,7 +136,7 @@ public class IabHelper implements PurchasesUpdatedListener {
     public static final int IABHELPER_VERIFICATION_FAILED = -1003;
     public static final int IABHELPER_SEND_INTENT_FAILED = -1004;
     public static final int IABHELPER_USER_CANCELLED = -1005;
-    public static final int IABHELPER_UNKNOWN_PURCHASE_RESPONSE = -1006;
+    public static final int IABHELPER_UNKNOWN_PURCHASE_QUERY = -1006;
     public static final int IABHELPER_MISSING_TOKEN = -1007;
     public static final int IABHELPER_UNKNOWN_ERROR = -1008;
     public static final int IABHELPER_SUBSCRIPTIONS_NOT_AVAILABLE = -1009;
@@ -150,7 +163,7 @@ public class IabHelper implements PurchasesUpdatedListener {
             IabResult successResult = failBillingResponseNotOk(billingResult, mPurchaseNext);
             if (purchasesList == null) {
                 logError("Null data in IAB activity result.");
-                if (mPurchaseNext != null) mPurchaseNext.OnError(new IabResult(IABHELPER_BAD_RESPONSE, "Null data in IAB result"));
+                if (mPurchaseNext != null) mPurchaseNext.OnError(BAD_RESPONSE_FROM_SERVER, new IabResult(IABHELPER_BAD_RESPONSE, "Null data in IAB result"));
                 return;
             }
             if (mPurchaseNext == null){
@@ -206,7 +219,7 @@ public class IabHelper implements PurchasesUpdatedListener {
         if (!p.verifyPurchase(mSignatureBase64)){
             String err = p.getPurhcaseVerifyFailMessage();
             logWarning(err);
-            if (next != null) next.OnError(new IabResult(IABHELPER_VERIFICATION_FAILED,err)); //set null to not error
+            if (next != null) next.OnError(VERIFICATION_FAILED, new IabResult(IABHELPER_VERIFICATION_FAILED,err)); //set null to not error
             return false;
         }
         return true;
@@ -349,7 +362,7 @@ public class IabHelper implements PurchasesUpdatedListener {
         else if (code == IABHELPER_VERIFICATION_FAILED) err = "IAB Helper Error: Purchase signature verification failed";
         else if (code == IABHELPER_SEND_INTENT_FAILED) err = "IAB Helper Error: Send intent failed";
         else if (code == IABHELPER_USER_CANCELLED) err = "IAB Helper Error: User cancelled";
-        else if (code == IABHELPER_UNKNOWN_PURCHASE_RESPONSE) err = "IAB Helper Error: Unknown purchase response";
+        else if (code == IABHELPER_UNKNOWN_PURCHASE_QUERY) err = "IAB Helper Error: Unknown purchase - make sure to query product ids";
         else if (code == IABHELPER_MISSING_TOKEN) err = "IAB Helper Error: Missing token";
         else if (code == IABHELPER_UNKNOWN_ERROR) err = "IAB Helper Error: Unknown error";
         else if (code == IABHELPER_SUBSCRIPTIONS_NOT_AVAILABLE) err = "IAB Helper Error: Subscriptions not available";
@@ -417,7 +430,7 @@ public class IabHelper implements PurchasesUpdatedListener {
     
     // helper - some calls to not return when no products given - queryProductDetailsAsync
     public void errorOnEmptyProductList(IabNext next){
-        next.OnError(new IabResult(IABHELPER_BAD_ARGUMENT, "please request with a list of product ids - "+next.getArgsProductIds().toString()));
+        next.OnError(INVALID_ARGUMENTS, new IabResult(IABHELPER_BAD_ARGUMENT, "please request with a list of product ids - "+next.getArgsProductIds().toString()));
     }
     
     /* Initialize billing client and connect */
@@ -613,7 +626,7 @@ public class IabHelper implements PurchasesUpdatedListener {
         checkNotDisposed();
 
         if (! next.inAppBilling.iabHelperInventory.hasDetails(productId)){
-            next.OnError(new IabResult(IABHELPER_UNKNOWN_PURCHASE_RESPONSE, "Trying to purchase unrecognized product id: "+productId));
+            next.OnError(INVALID_ARGUMENTS, new IabResult(IABHELPER_UNKNOWN_PURCHASE_QUERY, "Trying to purchase unrecognized product id: "+productId));
             return;
         }
         IabProductDetails purchaseIabProductDetails = next.inAppBilling.iabHelperInventory.getDetails(productId);
@@ -638,21 +651,21 @@ public class IabHelper implements PurchasesUpdatedListener {
         checkNotDisposed();
 
         if (! next.inAppBilling.iabHelperInventory.hasDetails(productId)){
-            next.OnError(new IabResult(IABHELPER_UNKNOWN_PURCHASE_RESPONSE, "Trying to complete purchase of unrecognized product id: "+productId));
+            next.OnError(INVALID_ARGUMENTS, new IabResult(IABHELPER_UNKNOWN_PURCHASE_QUERY, "Trying to complete purchase of unrecognized product id: "+productId));
             return;
         }
         IabProductDetails purchaseIabProductDetails = next.inAppBilling.iabHelperInventory.getDetails(productId);
         if (! next.inAppBilling.iabHelperInventory.hasPurchase(productId)){
-            next.OnError(new IabResult(IABHELPER_UNKNOWN_PURCHASE_RESPONSE, "Trying to complete purchase that wasn't made of product id: "+productId));
+            next.OnError(INVALID_ARGUMENTS, new IabResult(IABHELPER_UNKNOWN_PURCHASE_QUERY, "Trying to complete purchase that wasn't made of product id: "+productId));
             return;
         }
         IabPurchase iabPurchase = next.inAppBilling.iabHelperInventory.getPurchase(productId);
         if (iabPurchase.getPending()){
-            next.OnError(new IabResult(IABHELPER_INVALID_CONSUMPTION, "Trying to complete a purchase that is still pending: "+productId));
+            next.OnError(CONSUME_FAILED, new IabResult(IABHELPER_INVALID_CONSUMPTION, "Trying to complete a purchase that is still pending: "+productId));
             return;
         }
         if (! verifyPurchases(iabPurchase)){
-            next.OnError(new IabResult(IABHELPER_VERIFICATION_FAILED, "Trying to complete purchase of unverified purchase product id: "+productId));
+            next.OnError(VERIFICATION_FAILED, new IabResult(IABHELPER_VERIFICATION_FAILED, "Trying to complete purchase of unverified purchase product id: "+productId));
             return;
         }
         boolean consume = BillingClient.ProductType.INAPP.equals(purchaseIabProductDetails.getProductType()) && iabPurchase.getIsConsumable();
