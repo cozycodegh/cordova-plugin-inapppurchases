@@ -3,6 +3,9 @@
 jump to: [PLUGIN USAGE](#plugin-usage) | [Testing App](#testing-app) | [Demo App](#demo-app) | [Cordova](#create-app) | [ADD IN APP PURCHASES](#add-inapp) | [Testing Tips](#testing-tips) | [Future Improvements](#future) | [cozycode.ca](#more-cozycode) | [Open Source License](#license) 
 <hr/>
 
+***Cordova*** plugin to add ***in-app purchases*** (and ***subscriptions***) into an app. <br>
+Use JavaScript to view, make, and complete purchases.
+
 Updated __2023__ for [Cordova](https://cordova.apache.org/) with current:<br>
 __Android__: *Billing Library 5* (released May 2022) (verifies receipts internally)<br>
 __iOS__: *StoreKit* (not StoreKit 2, released 2021, which is only available for iOS 15 and up) (does not verify receipts currently - but returns them)<br>
@@ -10,13 +13,13 @@ __Amazon Fire__: compatible, but untested <br>
 __Browser__: not implemented<br>
 __Windows__: not implemented <br>
 
-***Cordova*** plugin to add ***in-app purchases*** (and ***subscriptions***) into an app. <br>
-Use JavaScript to view, make, and complete purchases.
 
 <p align="center">
-Downloaded 100 - 500 times/week into apps.
 <img src="docs/downloads.png" alt="" width="300" align="center" />
 </p>
+<p align="center">
+Downloaded 100 - 500 times/week into apps.
+<p>
 
 If you notice any issues, submit here: [github issues](https://github.com/cozycodegh/cordova-plugin-inapppurchases/issues)<br>
 Based on the original plugin working for many years made by Alex Disler (c) 2016 MIT, which is out of date for writing new apps: [`cordova-plugin-inapppurchase`](https://github.com/AlexDisler/cordova-plugin-inapppurchase)<br>
@@ -24,6 +27,7 @@ Forked from another plugin, which is kept updated as well, if this plugin is bro
 This new plugin distribution makes significant changes to the Google Play Billing Library and plugin integration code.
 
 Have a good one! :grinning:
+
 
 # PLUGIN USAGE<a id="plugin-usage"></a><br>
 
@@ -35,6 +39,8 @@ Add these calls inside of your cordova JavaScript to make in-app purchases and s
 [`inAppPurchase.completePurchase(productId,consume)`](docs/completePurchase.md) <br>
 
 The plugin creates an `inAppPurchases` object which can make calls to the store. <br>
+
+[see how to add the plugin](#add-inapp)
 
 [see more on using the plugin](docs/pluginAPI.md)
 
