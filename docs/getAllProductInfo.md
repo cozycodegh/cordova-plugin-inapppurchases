@@ -32,9 +32,9 @@ products[i]["priceAsDecimal"] // price of the product as number
 products[i]["priceRaw"]     // price of the product as a number string
 products[i]["country"]      // country of the pricing information, iOS only
 products[i]["currency"]     // price units 
-products[i]["introductoryPrice"] //iOS only - contains more information subscription introductory free trials or other offers (eg. length of the offer)
-products[i]["introductoryPriceSupported"] //iOS only - introductoryPrice price offers are supported for this account currently in their billing country
-products[i]["introductoryOriginalPrice"] //iOS only - contains the original price before the introductory offer was applied
+products[i]["introductoryPrice"] //contains an array with more information about subscription introductory free trials or other offers (price, priceRaw, subscriptionPeriod, etc.)
+products[i]["introductoryPriceSupported"] //introductoryPrice price offers are supported for this account currently in their billing country
+products[i]["introductoryOriginalPrice"] //contains the original subsription price before the introductory offer was applied
 ```
 
 ## Example

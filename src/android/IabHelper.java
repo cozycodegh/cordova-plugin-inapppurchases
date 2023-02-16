@@ -485,10 +485,10 @@ public class IabHelper implements PurchasesUpdatedListener {
     /* Get Available Product Details */
     //get inapp or subs
     public void getProductDetailsAsync(IabNext next, String productType){
-        logInfo (TAG + " " + "Getting all "+productType+" product details");
+        logInfo (TAG + " " + "Getting all "+productType+" product details"); //only returns for productType even when set all
         checkNotDisposed();
         
-        List<String> productIdList = next.getAllProductIds(); //only returns for productType even when set all
+        List<String> productIdList = next.getArgsProductIds(); //or all productids
         if (productIdList == null || productIdList.size() == 0){
             errorOnEmptyProductList(next);
             return;

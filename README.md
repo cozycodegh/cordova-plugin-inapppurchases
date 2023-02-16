@@ -13,6 +13,11 @@ __Windows__: not implemented <br>
 ***Cordova*** plugin to add ***in-app purchases*** (and ***subscriptions***) into an app. <br>
 Use JavaScript to view, make, and complete purchases.
 
+<p align="center">
+Downloaded 100 - 500 times/week into apps.
+<img src="docs/downloads.png" alt="" width="300" align="center" />
+</p>
+
 If you notice any issues, submit here: [github issues](https://github.com/cozycodegh/cordova-plugin-inapppurchases/issues)<br>
 Based on the original plugin working for many years made by Alex Disler (c) 2016 MIT, which is out of date for writing new apps: [`cordova-plugin-inapppurchase`](https://github.com/AlexDisler/cordova-plugin-inapppurchase)<br>
 Forked from another plugin, which is kept updated as well, if this plugin is broken, try this plugin: [`cordova-plugin-inapppurchase2`](https://github.com/wccrawford/cordova-plugin-inapppurchase-2)<br>

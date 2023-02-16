@@ -91,7 +91,8 @@ public class IabNext  {
         if (inAppBilling.iabHelper != null){
             inAppBilling.iabHelper.logError("Error during "+action+": "+result.getMessage());
             inAppBilling.iabHelper.flagEndAsync();
-            this.callbackContext.error(inAppBilling.makeError(mFailAppendMessage, mFailErrorCode, result));
+            //this.callbackContext.error(inAppBilling.makeError(mFailAppendMessage, mFailErrorCode, result));
+            this.callbackContext.error(inAppBilling.makeError(result));
         } else {
             this.callbackContext.error(result.getMessage());
         }

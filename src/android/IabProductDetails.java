@@ -17,8 +17,12 @@
 
 package com.alexdisler_github_cozycode.inapppurchases;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONArray;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
@@ -43,6 +47,9 @@ public class IabProductDetails {
     String mPriceRaw;
     String mCountry;
     String mOfferToken;
+    String mOriginalPrice;
+    Boolean mIntroductoryPriceSupported = false;
+    String[][] mIntroductoryPrice;
     
     String TAG = "google.payments ISD";
     
@@ -54,6 +61,8 @@ public class IabProductDetails {
         mTitle = productDetails.getTitle();
         mDescription = productDetails.getDescription();
         mCountry = "-"; //not supported
+        DecimalFormat formatter = new DecimalFormat("#.00####");
+        formatter.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.ENGLISH));
         //         mPriceAsDecimal = Double.valueOf(1000);
         // All product types - com.android.billingclient.api.BillingClient.ProductType;
         if(ProductType.INAPP.equals(mProductType)) {
@@ -61,17 +70,38 @@ public class IabProductDetails {
             mPrice = otp.getFormattedPrice();
             mPriceCurrency = otp.getPriceCurrencyCode();
             mPriceAsDecimal = otp.getPriceAmountMicros()/Double.valueOf(1000000);
+            /*List<ProductDetails.PricingPhase> pp = otp.getPricingPhases().getPricingPhaseList();
+            if (pp.size() > 1){
+                mPricePhase2 = pp.get(1).getFormattedPrice();
+            }*/
         } else {
             ProductDetails.SubscriptionOfferDetails so = productDetails.getSubscriptionOfferDetails().get(0); //getting first offer
-            ProductDetails.PricingPhase pp = so.getPricingPhases().getPricingPhaseList().get(0);
-            mPrice = pp.getFormattedPrice();
-            mPriceCurrency = pp.getPriceCurrencyCode();
-            mPriceAsDecimal = pp.getPriceAmountMicros()/Double.valueOf(1000000);
+            List<ProductDetails.PricingPhase> pp = so.getPricingPhases().getPricingPhaseList();
+            ProductDetails.PricingPhase pp1 = pp.get(0);
+            mPrice = pp1.getFormattedPrice();
+            mPriceCurrency = pp1.getPriceCurrencyCode();
+            mPriceAsDecimal = pp1.getPriceAmountMicros()/Double.valueOf(1000000);
             mOfferToken = so.getOfferToken();
+            if (pp.size() > 1){
+                mOriginalPrice = pp.get(pp.size()-1).getFormattedPrice();
+                mIntroductoryPriceSupported = true;
+                mIntroductoryPrice = new String[pp.size()-1][];
+                for (int i=0; i<pp.size()-1; i++){
+                    ProductDetails.PricingPhase ppi = pp.get(i);
+                    mIntroductoryPrice[i] = new String[] {
+                        Integer.toString(ppi.getBillingCycleCount()),
+                        ppi.getBillingPeriod(),
+                        "-",
+                        formatter.format(ppi.getPriceAmountMicros()/Double.valueOf(1000000)),
+                        ppi.getFormattedPrice(),
+                        ppi.getPriceCurrencyCode()
+                    };
+                }
+            } else {
+                mOriginalPrice = mPrice;
+            }
         }
         //         long priceMicros = productDetails.getPriceAmountMicros();
-        DecimalFormat formatter = new DecimalFormat("#.00####");
-        formatter.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.ENGLISH));
         mPriceRaw = formatter.format(mPriceAsDecimal);
     }
     
@@ -84,7 +114,28 @@ public class IabProductDetails {
     public String getTitle() { return mTitle; }
     public String getDescription() { return mDescription; }
     public String getOfferToken() { return mOfferToken; }
+    public String getIntroductoryOriginalPrice() { return mOriginalPrice; }
+    public Boolean getIntroductoryPriceSupported() { return mIntroductoryPriceSupported; }
     public ProductDetails getProductDetails() { return mProductDetails; }
+    public JSONArray getIntroductoryPriceJSON() throws JSONException {
+        JSONArray detailsArrayJSON = new JSONArray();
+        for (int i=0; i<mIntroductoryPrice.length; i++){
+            JSONObject detailsJSON = new JSONObject();
+            JSONObject subscriptionPeriodJson = new JSONObject();
+            subscriptionPeriodJson.put("numberOfUnits",mIntroductoryPrice[i][0]);
+            subscriptionPeriodJson.put("unit",mIntroductoryPrice[i][1]);
+            detailsJSON.put("subscriptionPeriod",subscriptionPeriodJson);
+            detailsJSON.put("country",mIntroductoryPrice[i][2]);
+            detailsJSON.put("priceRaw",mIntroductoryPrice[i][3]);
+            detailsJSON.put("price",mIntroductoryPrice[i][4]);
+            detailsJSON.put("currency",mIntroductoryPrice[i][5]);
+            detailsJSON.put("numerOfPeriods",1);
+            detailsArrayJSON.put(detailsJSON);
+        }
+        return detailsArrayJSON;
+    }
+    //https://developer.android.com/reference/com/android/billingclient/api/ProductDetails.PricingPhase
+    //https://learn.microsoft.com/en-us/dotnet/api/storekit.skproduct.introductoryprice?view=xamarin-ios-sdk-12
     
     public JSONObject getDetailsJSON() throws JSONException {
         JSONObject detailsJson = new JSONObject();
@@ -97,6 +148,9 @@ public class IabProductDetails {
         detailsJson.put("priceRaw", getPriceRaw());
         detailsJson.put("country", "-");
         detailsJson.put("currency", getPriceCurrency());
+        detailsJson.put("introductoryPriceSupported", getIntroductoryPriceSupported());
+        if (mOriginalPrice != null) detailsJson.put("introductoryOriginalPrice", getIntroductoryOriginalPrice());
+        if (mIntroductoryPrice != null) detailsJson.put("introductoryPrice", getIntroductoryPriceJSON());
         return detailsJson;
     }
     

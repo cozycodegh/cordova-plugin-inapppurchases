@@ -193,6 +193,9 @@ public class InAppBilling extends CordovaPlugin {
     protected JSONObject makeError(String title, Integer resultCode, String iabText) {
         return makeError(title, resultCode, null, iabText, null, null);
     }
+    protected JSONObject makeError(IabResult result){
+        return makeError("IAB RECEIVED ERROR", result.getIabCode(), result.getIabCode(), result.getMessage(), result.getResponseCode(), result.getResponseMessage());
+    }
     protected JSONObject makeError(Integer resultCode, String iabText){
         return makeError(null, resultCode, null, iabText, null, null);
     }
@@ -215,7 +218,6 @@ public class InAppBilling extends CordovaPlugin {
             if (resultCode == INVALID_ARGUMENTS) new_title = "INVALID_ARGUMENTS";
             else if (resultCode == UNABLE_TO_INITIALIZE) new_title = "UNABLE_TO_INITIALIZE";
             else if (resultCode == BILLING_NOT_INITIALIZED) new_title = "BILLING_NOT_INITIALIZED";
-            else if (resultCode == UNKNOWN_ERROR && (title == null || title.length() == 0)) new_title = "UNKNOWN_ERROR";
             else if (resultCode == USER_CANCELLED) new_title = "USER_CANCELLED";
             else if (resultCode == BAD_RESPONSE_FROM_SERVER) new_title = "BAD_RESPONSE_FROM_SERVER";
             else if (resultCode == VERIFICATION_FAILED) new_title = "VERIFICATION_FAILED";
@@ -224,6 +226,7 @@ public class InAppBilling extends CordovaPlugin {
             else if (resultCode == ITEM_NOT_OWNED) new_title = "ITEM_NOT_OWNED";
             else if (resultCode == CONSUME_FAILED) new_title = "CONSUME_FAILED";
             else if (resultCode == GOOGLE_PLAY_KEY_ERROR) new_title = "GOOGLE_PLAY_KEY_ERROR";
+            else if (resultCode == UNKNOWN_ERROR && (title == null || title.length() == 0)) new_title = "UNKNOWN_ERROR";
             if (iabText == null) iabText = title;
             else if (title != new_title) iabText = title + " " + iabText;
             title = new_title;
@@ -535,7 +538,7 @@ public class InAppBilling extends CordovaPlugin {
                 try {
                     if (thisNext.checkResultFail(result)) return;
                     try {
-                        JSONArray productDetailsJSONArray = iabHelperInventory.getAllKnownProductDetailsJSON();
+                        JSONArray productDetailsJSONArray = iabHelperInventory.getSelectedProductDetailsJSON(prev.getArgsProductIds());
                         iabHelper.logInfo(iabHelperInventory.toString());
                         if (iabHelper != null) iabHelper.flagEndAsync();
                         this.callbackContext.success(productDetailsJSONArray);

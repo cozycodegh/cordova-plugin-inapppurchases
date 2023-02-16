@@ -88,6 +88,16 @@ public class IabInventory {
         }
         return productDetailsJSON;
     }
+    // Get JSON string of all product details
+    public JSONArray getSelectedProductDetailsJSON(List<String> productIds) throws JSONException {
+        JSONArray productDetailsJSON = new JSONArray();
+        for (String productId : productIds) {
+            if (hasDetails(productId)){
+                productDetailsJSON.put(getDetailsJSON(productId));
+            }
+        }
+        return productDetailsJSON;
+    }
     // Edit the inventory
     void addProductDetails(IabProductDetails d) {
         mProductDetailsMap.put(d.getProductId(), d);

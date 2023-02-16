@@ -93,7 +93,7 @@ inAppPurchases.getAllProductInfo = function(productIds){
                                 priceAsDecimal: val.priceAsDecimal,
                                 currency: val.currency,
                                 country: val.country,
-                                introductoryPrice: val.introductoryPrice,
+                                introductoryPrice: [val.introductoryPrice],
                                 introductoryPriceSupported: val.introductoryPriceSupported == 1,
                                 introductoryOriginalPrice: val.price
                                 };
