@@ -155,7 +155,8 @@ inAppPurchases.getAllProductInfo = function(productIds){
                                     country: val.country,
                                     introductoryPrice: val.introductoryPrice,
                                     introductoryPriceSupported: val.introductoryPriceSupported,
-                                    introductoryOriginalPrice: val.introductoryOriginalPrice
+                                    introductoryOriginalPrice: val.introductoryOriginalPrice,
+                                    introductoryOriginalPriceAsDecimal: parseFloat(val.price.replace(/^[^0-9]*/,''))
                                     };
                                 });
                             }

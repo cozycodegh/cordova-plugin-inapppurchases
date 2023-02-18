@@ -35,6 +35,7 @@ products[i]["currency"]     // price units
 products[i]["introductoryPrice"] //contains an array with more information about subscription introductory free trials or other offers (price, priceRaw, subscriptionPeriod, etc.)
 products[i]["introductoryPriceSupported"] //introductoryPrice price offers are supported for this account currently in their billing country
 products[i]["introductoryOriginalPrice"] //contains the original subsription price before the introductory offer was applied
+products[i]["introductoryOriginalPriceAsDecimal"] //contains the original subsription price as a number, before the introductory offer was applied
 ```
 
 ## Example
