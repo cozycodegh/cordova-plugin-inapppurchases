@@ -134,6 +134,7 @@ see [common error messages](docs/errors.md) to handle other results
 # More from [cozycode.ca](https://cozycode.ca)<a id="more-cozycode"></a><br>
 
   * [make apps with JavaScript](https://cozycode.ca/post?pon=make-an-app-with-cordova)
+  * [how to add ads to an app made with Cordova](https://cozycode.ca/post?pon=cordova-plugin-ads)
   * [how to make an in-app purchases with Cordova](https://cozycode.ca/post?pon=cordova-plugin-inapppurchases)
   * [a testing app for in-app purchases](https://cozycode.ca/post?pon=cordova-plugin-inapppurchases-TEST-APP)
   * [a demo app for in-app purchases](https://cozycode.ca/post?pon=cordova-plugin-inapppurchases-DEMO-APP)
