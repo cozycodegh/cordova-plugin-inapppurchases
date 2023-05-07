@@ -8,7 +8,7 @@ Use JavaScript to view, make, and complete purchases.
 
 Updated __2023__ for [Cordova](https://cordova.apache.org/) with current:<br>
 __Android__: *Billing Library 5* (released May 2022) (verifies receipts internally)<br>
-__iOS__: *StoreKit* (not StoreKit 2, released 2021, which is only available for iOS 15 and up) (does not verify receipts currently - but returns them)<br>
+__iOS__: *StoreKit* (not StoreKit 2, released 2021, which is only available for iOS 15 and up) (does not verify receipts currently - it returns them, and can be verified if needed)<br>
 __Amazon Fire__: compatible, but untested <br>
 __Browser__: not implemented<br>
 __Windows__: not implemented <br>
@@ -18,7 +18,7 @@ __Windows__: not implemented <br>
 <img src="docs/downloads.png" alt="" width="300" align="center" />
 </p>
 <p align="center">
-Downloaded 100 - 500 times/week into apps.
+Downloaded 50 - 500 times/week into apps.
 <p>
 
 If you notice any issues, submit here: [github issues](https://github.com/cozycodegh/cordova-plugin-inapppurchases/issues)<br>
@@ -125,8 +125,8 @@ see [common error messages](docs/errors.md) to handle other results
     * you should be able to test without having to submit your app for review
   
 # Future Improvements<a id="future"></a><br>
-- [ ] add internal receipt checking for iOS
-- [ ] update to also include Storekit 2
+- [ ] update to also include Storekit 2, in a couple years
+- [ ] will not add internal receipt checking for iOS, mostly helpful for MMOs
 - [ ] support Windows apps
 - [x] tested working 2023 with Google Play Billing Library 5 for consumables, non-consumables, and subscriptions
 - [x] tested working 2023 with StoreKit for consumables, non-consumables, and subscriptions
