@@ -196,16 +196,20 @@ inAppPurchases.getPrevPurchase = function (productId){
     return inAppPurchases.purchases[productId];
 }
 
-inAppPurchases.getReciept = function (productId){
-    return new Promise(function (resolve, reject) {
-        if (!inAppPurchases.utils.validString(productId)) {
-            reject(inAppPurchases.utils.getError('product_id_string'));
-        } else {
-            nativeCall('bilingGetReceipt',[productId]).then(function (res) {
-                resolve(res);
-            })["catch"](reject);
-        }
-    });
+inAppPurchases.getReceipt = function (productId){
+    try {
+        return new Promise(function (resolve, reject) {
+            if (!inAppPurchases.utils.validString(productId)) {
+                reject(inAppPurchases.utils.getError('product_id_string'));
+            } else {
+                nativeCall('billingGetReceipt',[productId]).then(function (res) {
+                    resolve(res);
+                })["catch"](reject);
+            }
+        });
+    } catch (err) {
+        return Promise.reject(inAppPurchases.utils.getJSError(err));
+    }
 }
 
 module.exports = inAppPurchases;
