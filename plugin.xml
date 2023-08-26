@@ -59,7 +59,7 @@
     <source-file src="src/android/IabProductDetails.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
     <source-file src="src/android/IabNext.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
 
-    <framework src="com.android.billingclient:billing:6.0.0" />
+    <framework src="com.android.billingclient:billing:6.0.1" />
   </platform>
   
   <platform name="fire-os">
@@ -85,7 +85,7 @@
     <source-file src="src/android/IabProductDetails.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
     <source-file src="src/android/IabNext.java" target-dir="app/src/main/java/com/alexdisler_github_cozycode/inapppurchases" />
 
-    <framework src="com.android.billingclient:billing:6.0.0" />
+    <framework src="com.android.billingclient:billing:6.0.1" />
   </platform>
   
   <!-- not supported below -->
