@@ -164,6 +164,7 @@ public class IabHelper implements PurchasesUpdatedListener {
             if (purchasesList == null) {
                 logError("Null data in IAB activity result.");
                 if (mPurchaseNext != null) mPurchaseNext.OnError(BAD_RESPONSE_FROM_SERVER, new IabResult(IABHELPER_BAD_RESPONSE, "Null data in IAB result"));
+                else logError("missing mPurchaseNext to complete call");
                 return;
             }
             if (mPurchaseNext == null){
@@ -187,6 +188,7 @@ public class IabHelper implements PurchasesUpdatedListener {
             mPurchaseNext.OnNext(successResult, newInv);
         } catch (Exception e) {
             if (mPurchaseNext != null) mPurchaseNext.OnError(new IabResult(IABHELPER_UNKNOWN_ERROR, "onPurchasesUpdate received some error: "+e));
+            else logError("missing mPurchaseNext to complete call");
         }
     }
     /* Purchase Verification */
@@ -220,6 +222,7 @@ public class IabHelper implements PurchasesUpdatedListener {
             String err = p.getPurhcaseVerifyFailMessage();
             logWarning(err);
             if (next != null) next.OnError(VERIFICATION_FAILED, new IabResult(IABHELPER_VERIFICATION_FAILED,err)); //set null to not error
+            else logError("missing IabNext to complete call");
             return false;
         }
         return true;
@@ -344,7 +347,10 @@ public class IabHelper implements PurchasesUpdatedListener {
         IabResult result = getIabResultFromBillingResult(billingResult, addToErrorMsg);
         logInfo(result.toString());
         if (result != null) {
-            if (result.isFailure() && next != null) next.OnError(result);
+            if (result.isFailure()){
+                if (next != null) next.OnError(result);
+                else logError("missing IabNext to complete call");
+            }
             return result;
         }
         return new IabResult();
