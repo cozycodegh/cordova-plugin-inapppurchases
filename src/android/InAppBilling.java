@@ -145,7 +145,7 @@ public class InAppBilling extends CordovaPlugin {
             } catch (Exception e){
                 String err = "ERROR reading Google Play Store Key from manifest.json: "+e;
                 if (next != null) next.OnError(false,GOOGLE_PLAY_KEY_ERROR,err);
-                else logError("missing IabNext to complete call");
+                else if (iabHelper != null) iabHelper.logError("missing IabNext to complete call");
                 if (iabHelper != null) iabHelper.logError(err);
                 return null;
             }
@@ -161,7 +161,7 @@ public class InAppBilling extends CordovaPlugin {
                 } catch (Exception e){
                     String err = "ERROR converting Google Play Store Key from manifest.json: "+e;
                     if (next != null) next.OnError(false,GOOGLE_PLAY_KEY_ERROR,err);
-                    else logError("missing IabNext to complete call");
+                    else if (iabHelper != null) iabHelper.logError("missing IabNext to complete call");
                     if (iabHelper != null) iabHelper.logError(err);
                 }
             }
