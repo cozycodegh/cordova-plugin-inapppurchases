@@ -125,6 +125,7 @@ public class IabPurchase {
         detailsJson.put("productId", getProductId());
         detailsJson.put("productType", getProductType());
         detailsJson.put("purchaseTime", getPurchaseTime());
+        detailsJson.put("purchaseToken", getPurchaseToken());
         detailsJson.put("purchaseId", getOrderId());
         detailsJson.put("quantity", getQuantity());
         detailsJson.put("verified", getPurchaseVerified());

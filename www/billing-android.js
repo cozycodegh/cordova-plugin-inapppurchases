@@ -182,6 +182,7 @@ inAppPurchases.getPurchases = function(){
                     //productType: val.productType,
                     purchaseTime: val.purchaseTime,
                     purchaseId: val.purchaseId,
+                    purchaseToken: val.purchaseToken,
                     quantity: val.quantity,
                     verified: val.verified,
                     pending: val.pending,
@@ -203,6 +204,7 @@ inAppPurchases.restorePurchases = function(){
                 return {
                 productId: val.productId,
                 //productType: val.productType,
+                purchaseToken: val.purchaseToken,
                 purchaseTime: val.purchaseTime,
                 purchaseId: val.purchaseId,
                 quantity: val.quantity,
@@ -227,6 +229,7 @@ inAppPurchases.purchase = function (productId){
                 resolve({
                     productId: res.productId,
                     //productType: res.productType,
+                    purchaseToken: res.purchaseToken,
                     purchaseTime: res.purchaseTime,
                     purchaseId: res.purchaseId,
                     quantity: res.quantity,
@@ -248,6 +251,7 @@ inAppPurchases.completePurchase = function (productId, consume = false){
                 resolve({
                     productId: res.productId,
                     //productType: res.productType,
+                    purchaseToken: res.purchaseToken,
                     purchaseTime: res.purchaseTime,
                     purchaseId: res.purchaseId,
                     quantity: res.quantity,
