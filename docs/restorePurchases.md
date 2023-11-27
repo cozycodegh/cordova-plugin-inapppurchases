@@ -32,7 +32,7 @@ Each purchase object contains information about the purchase and its state:
 purchases[i]["productId"]       // string: the product id
 purchases[i]["purchaseTime"]    // int: timestamp of purchase
 purchases[i]["purchaseId"]      // string: id assigned by the app store when it was bought, called the Google order ID or Appstore transaction id
-purchase["purchaseToken"]   // string: Android only, token value for completed purchases, use to handle subscriptions
+purchases[i]["purchaseToken"]   // string: Android only, token value for completed purchases, use to handle subscriptions
 purchases[i]["quantity"]        // int: number of purchased consumables, for non-consumables and subscriptions always returns 1 
 purchases[i]["verified"]        // boolean: receipt signature was verified (stops modded or pirated versions of an app from enabling fake purchases - may error instead when tampered, optional, is done for Android locally)
 purchases[i]["pending"]         // boolean: Android only, purchase is pending (not paid for yet), wait for user to complete cash payment, then run inAppPurchases.completePurchase(productId) to complete (acknowledge and consume) the purchase
