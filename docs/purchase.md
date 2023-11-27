@@ -36,6 +36,7 @@ purchase["verified"]        // boolean: receipt signature was verified (stops mo
 purchase["receipt"]         // string: iOS only a receipt that can be used for verification, which has not been implemented
 purchase["pending"]         // boolean: Android only, purchase is pending (not paid for yet), wait for user to complete cash payment, then run inAppPurchases.completePurchase(productId) to complete (acknowledge and consume) the purchase
 purchase["completed"]       // boolean: has been acknowledged or consumed, will be false (in Android), unacknowledged purchases will be returned after a few days in Android. unconsumed purchases will not be available for repurchase until they are completed
+purchase["purchaseToken"]   // string: Android only, token value for completed purchases, use to handle subscriptions
 ```
 
 ## Some of the Possible Error Messages <a id="buy-errors"></a>
