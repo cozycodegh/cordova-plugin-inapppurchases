@@ -28,6 +28,7 @@ public class IabNext  {
     private int mFailErrorCode;
     private String mFailAppendMessage = "";
     private String mArgsProductId;
+    private int mSubscriptionReplacementMode = -1;
     private boolean mArgsConsumable;
     private List<String> mArgsProductIds;
     public IabInventory tempInv;
@@ -156,6 +157,32 @@ public class IabNext  {
         }
         mArgsConsumable = consumable;
         return mArgsConsumable;
+    }
+    public int getArgsSubscriptionReplacementMode(){
+        return getArgsSubscriptionReplacementMode(false);
+    }
+    public int getArgsSubscriptionReplacementMode(boolean force){
+        if (mSubscriptionReplacementMode != -1) return mSubscriptionReplacementMode;
+        if (args.length() < 2){
+            if (force){
+                inAppBilling.iabHelper.logError("No args subscription replacement mode was found");
+                inAppBilling.iabHelper.flagEndAsync();
+                callbackContext.error(inAppBilling.makeError(inAppBilling.INVALID_ARGUMENTS, "Missing 2nd argument, subscription replacement mode"));
+                return -1;
+            }
+            return -1;
+        }
+        int subscriptionReplacementMode;
+        try {
+            subscriptionReplacementMode = (Integer) args.get(1);
+            //if (args.length() > 1) { developerPayload = args.getString(1); }
+        } catch (JSONException e) {
+            inAppBilling.iabHelper.flagEndAsync();
+            callbackContext.error(inAppBilling.makeError(inAppBilling.INVALID_ARGUMENTS, "Invalid subscription replacement mode argument"+e.toString()));
+            return -1;
+        }
+        mSubscriptionReplacementMode = subscriptionReplacementMode;
+        return mSubscriptionReplacementMode;
     }
     public List<String> getArgsProductIds(){
         return getArgsProductIds(false);

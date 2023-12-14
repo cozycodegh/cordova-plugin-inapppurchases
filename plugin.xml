@@ -3,7 +3,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
   xmlns:android="http://schemas.android.com/apk/res/android"
   id="cordova-plugin-inapppurchases"
-  version="2.4.8">
+  version="3.0.0">
 
   <name>In App Purchases</name>
   <description>Cordova plugin to add in-app-purchases (and subscriptions) into an app, use javascript to view, make, and complete purchases.</description>

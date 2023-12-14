@@ -62,6 +62,8 @@ import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
 import com.android.billingclient.api.BillingClient.FeatureType;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingFlowParams.ProductDetailsParams;
+import com.android.billingclient.api.BillingFlowParams.SubscriptionUpdateParams;
+import com.android.billingclient.api.BillingFlowParams.SubscriptionUpdateParams.ReplacementMode;
 import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.ConsumeResponseListener;
 
@@ -333,6 +335,8 @@ public class IabHelper implements PurchasesUpdatedListener {
             return new IabResult(IABHELPER_RECEIVED_ERROR, BillingClient.BillingResponseCode.SERVICE_TIMEOUT, "Billing response error: The request has reached the maximum timeout before Google Play responds. "+addToErrorMsg,billingResult.getDebugMessage());
         } else if (responseCode == BillingClient.BillingResponseCode.SERVICE_UNAVAILABLE){
             return new IabResult(IABHELPER_RECEIVED_ERROR, BillingClient.BillingResponseCode.SERVICE_UNAVAILABLE, "Billing response error: The service is currently unavailable. "+addToErrorMsg,billingResult.getDebugMessage());
+        } else if (responseCode == BillingClient.BillingResponseCode.NETWORK_ERROR ){
+            return new IabResult(IABHELPER_RECEIVED_ERROR, BillingClient.BillingResponseCode.NETWORK_ERROR , "Billing response error: There was a problem with the network connection between the device and Play systems. "+addToErrorMsg,billingResult.getDebugMessage());
         } else if (responseCode == BillingClient.BillingResponseCode.USER_CANCELED){
             return new IabResult(IABHELPER_RECEIVED_ERROR, BillingClient.BillingResponseCode.USER_CANCELED, "Billing response error: Transaction was canceled by the user. "+addToErrorMsg,billingResult.getDebugMessage());
         } else if (responseCode != BillingClient.BillingResponseCode.OK){
@@ -628,6 +632,9 @@ public class IabHelper implements PurchasesUpdatedListener {
     
     /* Purchase a Product */
     public void launchBillingFlowAsync(IabNext next, String productId){
+        launchBillingFlowAsync(next, productId, -1);
+    }
+    public void launchBillingFlowAsync(IabNext next, String productId, int upgradeReplacementMode){
         logInfo (TAG + " " + "Launching billing flow for "+productId);
         checkNotDisposed();
 
@@ -645,6 +652,41 @@ public class IabHelper implements PurchasesUpdatedListener {
         BillingFlowParams billingFlowParams = BillingFlowParams.newBuilder()
             .setProductDetailsParamsList(productDetailsParamsList)
             .build();
+        
+        //subscription upgrade
+        if (upgradeReplacementMode != -1){
+            if (! next.inAppBilling.iabHelperInventory.hasPurchase(productId)){
+                next.OnError(INVALID_ARGUMENTS, new IabResult(IABHELPER_UNKNOWN_PURCHASE_QUERY, "Trying to upgrade a subscription for a product id that was not purchased: "+productId));
+                return;
+            }
+            if (upgradeReplacementMode == BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.CHARGE_FULL_PRICE){
+                logInfo (TAG + " " + "Subscription replacement mode: CHARGE_FULL_PRICE");
+            } else if (upgradeReplacementMode == BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.CHARGE_FULL_PRICE){
+                logInfo (TAG + " " + "Subscription replacement mode: CHARGE_PRORATED_PRICE");
+            } else if(upgradeReplacementMode == BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.CHARGE_PRORATED_PRICE){
+                logInfo (TAG + " " + "Subscription replacement mode: CHARGE_PRORATED_PRICE");
+            } else if(upgradeReplacementMode == BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.DEFERRED){
+                logInfo (TAG + " " + "Subscription replacement mode: DEFERRED");
+            } else if(upgradeReplacementMode == BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.UNKNOWN_REPLACEMENT_MODE){
+                logInfo (TAG + " " + "Subscription replacement mode: UNKNOWN_REPLACEMENT_MODE");
+            } else if(upgradeReplacementMode == BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.WITHOUT_PRORATION){
+                logInfo (TAG + " " + "Subscription replacement mode: WITHOUT_PRORATION");
+            } else if(upgradeReplacementMode == BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.WITH_TIME_PRORATION){
+                logInfo (TAG + " " + "Subscription replacement mode: WITH_TIME_PRORATION");
+            } else {
+                logWarning (TAG + " " + "Unrecognized subscription upgrade replacement mode: "+Integer.toString(upgradeReplacementMode));
+            }
+            IabPurchase iabPurchase = next.inAppBilling.iabHelperInventory.getPurchase(productId);
+            String upgradePurchaseToken = iabPurchase.getPurchaseToken();
+            SubscriptionUpdateParams subscriptionUpdateParams = BillingFlowParams.SubscriptionUpdateParams.newBuilder()
+                           .setOldPurchaseToken(upgradePurchaseToken)
+                           .setSubscriptionReplacementMode(upgradeReplacementMode)
+                           .build();
+            billingFlowParams = BillingFlowParams.newBuilder()
+                .setProductDetailsParamsList(productDetailsParamsList)
+                .setSubscriptionUpdateParams(subscriptionUpdateParams)
+                .build();
+        }
         
         // Launch the billing flow
         mPurchaseNext = next;

@@ -10,6 +10,7 @@ utils.errors = {
   'product_id_string' : { 102: 'invalid argument - productId must be a string' },
   'receipt_jsonstring' : { 103: 'invalid argument - receipt must be a string of a json'},
   'signature_string' : { 104: 'invalid argument - signature must be a string' },
+  'replacement_mode_invalid' : { 105: 'invalid argument - unknown replacement mode, choose from inAppPurchases.subscriptionReplacementMode' },
   'billing_js_error' : { 111: 'billing js error' },
   'not_implemented' : { 112: 'not implemented for this platform - iOS and Android only' }
 };
@@ -36,6 +37,10 @@ utils.validArrayOfStrings = function (val) {
 utils.validString = function (val) {
   return val && val.length && typeof val === 'string';
 };
+utils.validReplacementMode = function (val) {
+    return val && typeof val === 'number'
+        && Object.values(inAppPurchases.subscriptionReplacementMode).indexOf(val) != -1;
+}
 utils.emptyiOSPurchase = function (productId){
     return {
     productId: productId,
@@ -157,13 +162,15 @@ inAppPurchases.restorePurchases = function(){
     });
 }
 
-inAppPurchases.purchase = function (productId){
+inAppPurchases.purchase = function (productId,replacementMode=-1){
     return new Promise(function (resolve, reject) {
         try {
             if (!inAppPurchases.utils.validString(productId)) {
                 reject(inAppPurchases.utils.getError('product_id_string'));
-            } else {
-                nativeCall('billingPurchase',[productId]).then(function (res) {
+            } else if (replacementMode != -1 && !inAppPurchases.utils.validReplacementMode(replacementMode)){
+                reject(inAppPurchases.utils.getError('replacement_mode_invalid'));
+            }  else {
+                nativeCall('billingPurchase',[productId,replacementMode]).then(function (res) {
                     var purchase = {
                         productId: res.productId,
                             //productType: res.productType,
@@ -194,7 +201,7 @@ inAppPurchases.getPrevPurchase = function (productId){
     return inAppPurchases.purchases[productId];
 }
 
-inAppPurchases.getReciept = function (productId){
+inAppPurchases.getReceipt = function (productId){
     return new Promise(function (resolve, reject) {
         if (!inAppPurchases.utils.validString(productId)) {
             return reject(inAppPurchases.utils.getError('product_id_string'));
@@ -205,5 +212,14 @@ inAppPurchases.getReciept = function (productId){
         }
     });
 }
+
+inAppPurchases.subscriptionReplacementMode = {
+    "CHARGE_FULL_PRICE":5,
+    "CHARGE_PRORATED_PRICE":2,
+    "DEFERRED":6,
+    "UNKNOWN_REPLACEMENT_MODE":0,
+    "WITHOUT_PRORATION":3,
+    "WITH_TIME_PRORATION":1
+};
 
 module.exports = inAppPurchases;
