@@ -23,7 +23,8 @@ inAppPurchases.purchase(productId).then(function (purchase) {
  - Android now supports pending purchases (user has agreed to pay later outside the app, but hasn't paid yet) and buying multiple consumbles at once (quantity)
 
 ## Parameters:
-`- product id to purchase `
+- `product id` (string) to purchase
+- `replacement mode` (int, optional) Android only, subscription replacement mode for upgrades and downgrades, use the inAppPurchases.subscriptionReplacementMode object for a list of modes
 
 ## Returns:
 A purchase object:
@@ -69,7 +70,9 @@ Some errors can be retried automatically, otherwise could display an error messa
 ## Example
 ```js
 function buyRemoveAds(){
-    inAppPurchases.purchase(ads_remove_id).then( function(purchase){
+    inAppPurchases.purchase(ads_remove_id,
+      inAppPurchases.subscriptionReplacementMode.CHARGE_FULL_PRICE
+      ).then( function(purchase){
         if (purchase["pending"]) continue; //not paid for yet
         // handle purchase here, or after its been completed:
         removeAds();
