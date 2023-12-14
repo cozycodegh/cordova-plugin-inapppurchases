@@ -52,6 +52,7 @@ Some errors can be retried automatically, otherwise could display an error messa
 - SERVICE_DISCONNECTED  - The app is not connected to the Play Store service via the Google Play Billing Library. (Okay to automatically retry purchase a few times)
 - SERVICE_TIMEOUT       - The request has reached the maximum timeout before Google Play responds.  (Okay to automatically retry purchase a few times) 
 - SERVICE_UNAVAILABLE   - The service is currently unavailable.  (Okay to automatically retry purchase a few times)
+- NETWORK_ERROR         - A network error occurred during the operation.
 - FEATURE_NOT_SUPPORTED - The requested feature is not supported by the Play Store on the current device.
 - BILLING_UNAVAILABLE   - A user billing error occurred during processing.
 - DEVELOPER_ERROR       - Error resulting from incorrect usage of the API. (For example not including the manifest.json Google Play key.)
