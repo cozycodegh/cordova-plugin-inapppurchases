@@ -24,7 +24,7 @@ inAppPurchases.purchase(productId).then(function (purchase) {
 
 ## Parameters:
 - `product id` (string) to purchase
-- `replacement mode` (int, optional) Android only, subscription replacement mode for upgrades and downgrades, use the inAppPurchases.subscriptionReplacementMode object for a list of modes
+- `replacement mode` (int, optional) Android only, subscription replacement mode for upgrades and downgrades, use the `inAppPurchases.subscriptionReplacementMode` object for a list of modes
 
 ## Returns:
 A purchase object:
