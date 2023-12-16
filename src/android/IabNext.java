@@ -28,7 +28,8 @@ public class IabNext  {
     private int mFailErrorCode;
     private String mFailAppendMessage = "";
     private String mArgsProductId;
-    private int mSubscriptionReplacementMode = -1;
+    private String mArgsSubscriptionUpgradeProductId = "";
+    private int mArgsSubscriptionReplacementMode = -1;
     private boolean mArgsConsumable;
     private List<String> mArgsProductIds;
     public IabInventory tempInv;
@@ -158,31 +159,57 @@ public class IabNext  {
         mArgsConsumable = consumable;
         return mArgsConsumable;
     }
+    public String getArgsSubscriptionUpgradeProductId(){
+        return getArgsSubscriptionUpgradeProductId(false);
+    }
+    public String getArgsSubscriptionUpgradeProductId(boolean force){
+        if (mArgsSubscriptionUpgradeProductId != "") return mArgsSubscriptionUpgradeProductId;
+        if (args.length() < 2){
+            if (force){
+                inAppBilling.iabHelper.logError("No args subscription replacement product id was found");
+                inAppBilling.iabHelper.flagEndAsync();
+                callbackContext.error(inAppBilling.makeError(inAppBilling.INVALID_ARGUMENTS, "Missing 2nd argument, subscription product id to replace"));
+                return "";
+            }
+            return "";
+        }
+        String subscriptionUpgradeProductId;
+        try {
+            subscriptionUpgradeProductId = (String) args.get(1);
+            //if (args.length() > 1) { developerPayload = args.getString(1); }
+        } catch (JSONException e) {
+            inAppBilling.iabHelper.flagEndAsync();
+            callbackContext.error(inAppBilling.makeError(inAppBilling.INVALID_ARGUMENTS, "Invalid subscription product id argument"+e.toString()));
+            return "";
+        }
+        mArgsSubscriptionUpgradeProductId = subscriptionUpgradeProductId;
+        return mArgsSubscriptionUpgradeProductId;
+    }
     public int getArgsSubscriptionReplacementMode(){
         return getArgsSubscriptionReplacementMode(false);
     }
     public int getArgsSubscriptionReplacementMode(boolean force){
-        if (mSubscriptionReplacementMode != -1) return mSubscriptionReplacementMode;
-        if (args.length() < 2){
+        if (mArgsSubscriptionReplacementMode != -1) return mArgsSubscriptionReplacementMode;
+        if (args.length() < 3){
             if (force){
                 inAppBilling.iabHelper.logError("No args subscription replacement mode was found");
                 inAppBilling.iabHelper.flagEndAsync();
-                callbackContext.error(inAppBilling.makeError(inAppBilling.INVALID_ARGUMENTS, "Missing 2nd argument, subscription replacement mode"));
+                callbackContext.error(inAppBilling.makeError(inAppBilling.INVALID_ARGUMENTS, "Missing 3rd argument, subscription replacement mode"));
                 return -1;
             }
             return -1;
         }
         int subscriptionReplacementMode;
         try {
-            subscriptionReplacementMode = (Integer) args.get(1);
+            subscriptionReplacementMode = (Integer) args.get(2);
             //if (args.length() > 1) { developerPayload = args.getString(1); }
         } catch (JSONException e) {
             inAppBilling.iabHelper.flagEndAsync();
             callbackContext.error(inAppBilling.makeError(inAppBilling.INVALID_ARGUMENTS, "Invalid subscription replacement mode argument"+e.toString()));
             return -1;
         }
-        mSubscriptionReplacementMode = subscriptionReplacementMode;
-        return mSubscriptionReplacementMode;
+        mArgsSubscriptionReplacementMode = subscriptionReplacementMode;
+        return mArgsSubscriptionReplacementMode;
     }
     public List<String> getArgsProductIds(){
         return getArgsProductIds(false);
@@ -192,8 +219,10 @@ public class IabNext  {
         List<String> argsProductIds = new ArrayList<String>();
         for (int i = 0; i < args.length(); i++) {
             try {
-                argsProductIds.add(args.getString(i));
-                //if (inAppBilling.iabHelper != null) inAppBilling.iabHelper.logInfo("read in product id:" + args.getString(i));
+                String productId = args.getString(i);
+                if (productId.equals("")) break;
+                argsProductIds.add(productId);
+                if (inAppBilling.iabHelper != null) inAppBilling.iabHelper.logInfo("read in product id #"+Integer.toString(i)+": \"" + args.getString(i)+"\"");
             } catch (JSONException e) {
                 inAppBilling.iabHelper.flagEndAsync();
                 callbackContext.error(inAppBilling.makeError(inAppBilling.INVALID_ARGUMENTS,"Invalid Product ID (#"+Integer.toString(i)+")"));

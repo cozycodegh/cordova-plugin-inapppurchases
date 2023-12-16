@@ -164,15 +164,17 @@ inAppPurchases.restorePurchases = function(){
     });
 }
 
-inAppPurchases.purchase = function (productId,replacementMode=-1){
+inAppPurchases.purchase = function (productId,upgradeProductId="",replacementMode=-1){
     return new Promise(function (resolve, reject) {
         try {
             if (!inAppPurchases.utils.validString(productId)) {
                 reject(inAppPurchases.utils.getError('product_id_string'));
             } else if (replacementMode != -1 && !inAppPurchases.utils.validReplacementMode(replacementMode)){
                 reject(inAppPurchases.utils.getError('replacement_mode_invalid'));
+            } else if (upgradeProductId && !inAppPurchases.utils.validString(upgradeProductId)){
+                reject(inAppPurchases.utils.getError('product_id_string'));
             }  else {
-                nativeCall('billingPurchase',[productId]).then(function (res) {
+                nativeCall('billingPurchase',[productId, upgradeProductId, replacementMode]).then(function (res) {
                     var purchase = {
                         productId: res.productId,
                             //productType: res.productType,

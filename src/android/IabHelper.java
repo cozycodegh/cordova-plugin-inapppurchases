@@ -632,9 +632,9 @@ public class IabHelper implements PurchasesUpdatedListener {
     
     /* Purchase a Product */
     public void launchBillingFlowAsync(IabNext next, String productId){
-        launchBillingFlowAsync(next, productId, -1);
+        launchBillingFlowAsync(next, productId, "", -1);
     }
-    public void launchBillingFlowAsync(IabNext next, String productId, int upgradeReplacementMode){
+    public void launchBillingFlowAsync(IabNext next, String productId, String upgradeProductId, int upgradeReplacementMode){
         logInfo (TAG + " " + "Launching billing flow for "+productId);
         checkNotDisposed();
 
@@ -654,10 +654,13 @@ public class IabHelper implements PurchasesUpdatedListener {
             .build();
         
         //subscription upgrade
-        if (upgradeReplacementMode != -1){
-            if (! next.inAppBilling.iabHelperInventory.hasPurchase(productId)){
-                next.OnError(INVALID_ARGUMENTS, new IabResult(IABHELPER_UNKNOWN_PURCHASE_QUERY, "Trying to upgrade a subscription for a product id that was not purchased: "+productId));
+        if (upgradeReplacementMode != -1 && !upgradeProductId.equals("")){
+            if (! next.inAppBilling.iabHelperInventory.hasPurchase(upgradeProductId)){
+                next.OnError(INVALID_ARGUMENTS, new IabResult(IABHELPER_UNKNOWN_PURCHASE_QUERY, "Trying to upgrade a subscription for a product id that was not purchased: "+upgradeProductId));
                 return;
+            }
+            if (upgradeReplacementMode == -1){ //default
+                upgradeReplacementMode = BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.CHARGE_FULL_PRICE;
             }
             if (upgradeReplacementMode == BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.CHARGE_FULL_PRICE){
                 logInfo (TAG + " " + "Subscription replacement mode: CHARGE_FULL_PRICE");
@@ -676,7 +679,7 @@ public class IabHelper implements PurchasesUpdatedListener {
             } else {
                 logWarning (TAG + " " + "Unrecognized subscription upgrade replacement mode: "+Integer.toString(upgradeReplacementMode));
             }
-            IabPurchase iabPurchase = next.inAppBilling.iabHelperInventory.getPurchase(productId);
+            IabPurchase iabPurchase = next.inAppBilling.iabHelperInventory.getPurchase(upgradeProductId);
             String upgradePurchaseToken = iabPurchase.getPurchaseToken();
             SubscriptionUpdateParams subscriptionUpdateParams = BillingFlowParams.SubscriptionUpdateParams.newBuilder()
                            .setOldPurchaseToken(upgradePurchaseToken)

@@ -505,6 +505,7 @@ public class InAppBilling extends CordovaPlugin {
                 return;
             }
             String purchaseProductId = next.getArgsProductId(true);
+            String upgradingProductId = next.getArgsSubscriptionUpgradeProductId(true);
             int upgradeReplacementMode = next.getArgsSubscriptionReplacementMode(true);
             if (!iabHelperInventory.hasDetails(purchaseProductId)){
                 iabHelper.logInfo("Getting Product Details for "+purchaseProductId);
@@ -512,16 +513,16 @@ public class InAppBilling extends CordovaPlugin {
                     public void OnNext(IabResult result){ //, IabInventory inv){
                         try {
                             if (thisNext.checkResultFail(result)) return;
-                            if (!iabHelperInventory.hasPurchase(purchaseProductId)){
-                                iabHelper.logInfo("Getting Purchase for "+purchaseProductId);
+                            if (!iabHelperInventory.hasPurchase(upgradingProductId)){
+                                iabHelper.logInfo("Getting Purchase for "+upgradingProductId);
                                 getBillingPurchaseInfo(new IabNext(thisNext){
                                     public void OnNext(IabResult result){ //, IabInventory inv){
                                         try {
                                             if (thisNext.checkResultFail(result)) return;
                                             if (debugManifestFailure(thisNext)) return;
                                             try {
-                                                thisNext.inAppBilling.iabHelper.logInfo("Purchasing "+purchaseProductId+" with upgrade: "+Integer.toString(upgradeReplacementMode));
-                                                thisNext.inAppBilling.iabHelper.launchBillingFlowAsync(next, purchaseProductId);
+                                                thisNext.inAppBilling.iabHelper.logInfo("Purchasing "+purchaseProductId+" with upgrade from "+upgradingProductId+": "+Integer.toString(upgradeReplacementMode));
+                                                thisNext.inAppBilling.iabHelper.launchBillingFlowAsync(next, purchaseProductId,upgradingProductId,upgradeReplacementMode);
                                             } catch (Exception ex){
                                                 if (thisNext.inAppBilling.iabHelper != null) thisNext.inAppBilling.iabHelper.flagEndAsync();
                                                 this.callbackContext.error(makeError("UNKNOWN_ERROR: "+ex, UNKNOWN_ERROR));
@@ -533,8 +534,8 @@ public class InAppBilling extends CordovaPlugin {
                                     }
                                 });
                             } else {
-                                thisNext.inAppBilling.iabHelper.logInfo("Purchasing "+purchaseProductId+" with upgrade: "+Integer.toString(upgradeReplacementMode));
-                                thisNext.inAppBilling.iabHelper.launchBillingFlowAsync(next, purchaseProductId);
+                                thisNext.inAppBilling.iabHelper.logInfo("Purchasing "+purchaseProductId+" with upgrade from "+upgradingProductId+": "+Integer.toString(upgradeReplacementMode));
+                                thisNext.inAppBilling.iabHelper.launchBillingFlowAsync(next, purchaseProductId,upgradingProductId,upgradeReplacementMode);
                             }
                         } catch (Exception ex){
                             if (thisNext.inAppBilling.iabHelper != null) thisNext.inAppBilling.iabHelper.flagEndAsync();
@@ -543,16 +544,16 @@ public class InAppBilling extends CordovaPlugin {
                     }
                 });
             } else {
-                if (!iabHelperInventory.hasPurchase(purchaseProductId)){
-                iabHelper.logInfo("Getting Purchase for "+purchaseProductId);
+                if (!iabHelperInventory.hasPurchase(upgradingProductId)){
+                iabHelper.logInfo("Getting Purchase for "+upgradingProductId);
                 getBillingPurchaseInfo(new IabNext(next){
                     public void OnNext(IabResult result){ //, IabInventory inv){
                         try {
                             if (thisNext.checkResultFail(result)) return;
                             if (debugManifestFailure(thisNext)) return;
                             try {
-                                thisNext.inAppBilling.iabHelper.logInfo("Purchasing "+purchaseProductId+" with upgrade: "+Integer.toString(upgradeReplacementMode));
-                                thisNext.inAppBilling.iabHelper.launchBillingFlowAsync(next, purchaseProductId, upgradeReplacementMode);
+                                thisNext.inAppBilling.iabHelper.logInfo("Purchasing "+purchaseProductId+" with upgrade from "+upgradingProductId+": "+Integer.toString(upgradeReplacementMode));
+                                thisNext.inAppBilling.iabHelper.launchBillingFlowAsync(next, purchaseProductId, upgradingProductId, upgradeReplacementMode);
                             } catch (Exception ex){
                                 if (thisNext.inAppBilling.iabHelper != null) thisNext.inAppBilling.iabHelper.flagEndAsync();
                                 this.callbackContext.error(makeError("UNKNOWN_ERROR: "+ex, UNKNOWN_ERROR));
@@ -564,8 +565,8 @@ public class InAppBilling extends CordovaPlugin {
                     }
                 });
                 } else {
-                    next.inAppBilling.iabHelper.logInfo("Purchasing "+purchaseProductId+" with upgrade: "+Integer.toString(upgradeReplacementMode));
-                    next.inAppBilling.iabHelper.launchBillingFlowAsync(next, purchaseProductId, upgradeReplacementMode);
+                    next.inAppBilling.iabHelper.logInfo("Purchasing "+purchaseProductId+" with upgrade from "+upgradingProductId+": "+Integer.toString(upgradeReplacementMode));
+                    next.inAppBilling.iabHelper.launchBillingFlowAsync(next, purchaseProductId, upgradingProductId, upgradeReplacementMode);
                 }
             }
         } catch (Exception ex){
@@ -670,8 +671,9 @@ public class InAppBilling extends CordovaPlugin {
     protected void purchase(IabNext prev){
         iabHelper.logInfo("purchase");
         String purchaseProductId = prev.getArgsProductId(true);
+        String upgradingProductId = prev.getArgsSubscriptionUpgradeProductId();
         int upgradeReplacementMode = prev.getArgsSubscriptionReplacementMode();
-        if (upgradeReplacementMode != -1){ //do subscription upgrade instead
+        if (upgradeReplacementMode != -1 && !upgradingProductId.equals("")){ //do subscription upgrade instead
             subscriptionUpgrade(prev);
             return;
         }
@@ -714,6 +716,7 @@ public class InAppBilling extends CordovaPlugin {
     protected void subscriptionUpgrade(IabNext prev){
         iabHelper.logInfo("subscription upgrade");
         String purchaseProductId = prev.getArgsProductId(true);
+        String upgradingProductId = prev.getArgsSubscriptionUpgradeProductId(true);
         int upgradeReplacementMode = prev.getArgsSubscriptionReplacementMode(true);
         if (debugManifestFailure(prev)) return;
         getBillingProductInfo(new IabNext(prev){
@@ -726,9 +729,14 @@ public class InAppBilling extends CordovaPlugin {
                                 if (thisNext.checkResultFail(result)) return;
                                 String purchaseProductId = thisNext.getArgsProductId(true);
                                 thisNext.inAppBilling.iabHelperInventory.addInventory(newInv);
-                                thisNext.inAppBilling.iabHelper.logInfo(TAG + " bought subscription upgrade "+ purchaseProductId+" with upgrade: "+Integer.toString(upgradeReplacementMode));
+                                thisNext.inAppBilling.iabHelper.logInfo(TAG + " bought subscription upgrade "+ purchaseProductId+" from "+upgradingProductId+" with upgrade: "+Integer.toString(upgradeReplacementMode));
                                 if (this.inAppBilling.iabHelper != null) this.inAppBilling.iabHelper.logInfo(iabHelperInventory.toString());
-                                JSONObject purchaseJSONObject = thisNext.inAppBilling.iabHelperInventory.getPurchase(purchaseProductId).getDetailsJSON();
+                                IabPurchase iabPurchase = thisNext.inAppBilling.iabHelperInventory.getPurchase(purchaseProductId);
+                                if (!iabHelperInventory.hasPurchase(purchaseProductId)){
+                                    iabPurchase = thisNext.inAppBilling.iabHelperInventory.getPurchase(upgradingProductId);
+                                    thisNext.inAppBilling.iabHelper.logInfo(TAG + " subscription upgrade purchase is not yet available, "+ purchaseProductId+", returning upgraded purchase "+upgradingProductId+", done with upgrade: "+Integer.toString(upgradeReplacementMode));
+                                }
+                                JSONObject purchaseJSONObject = iabPurchase.getDetailsJSON();
                                 //thisNext.inAppBilling.iabHelper.logInfo(purchaseJSONObject.toString());
                                 if (thisNext.inAppBilling.iabHelper != null) thisNext.inAppBilling.iabHelper.flagEndAsync();
                                 this.callbackContext.success(purchaseJSONObject);
@@ -738,10 +746,8 @@ public class InAppBilling extends CordovaPlugin {
                             }
                         }
                     };
-                    //thisNext.inAppBilling.iabHelper.logInfo("purchasing "+purchaseProductId);
+                    thisNext.inAppBilling.iabHelper.logInfo("purchasing "+purchaseProductId);
                     doBillingSubscriptionUpgradePurchase(buyNext);
-                    //if (iabHelper != null) iabHelper.flagEndAsync();
-                    //this.callbackContext.success(purchasesJSONArray);
                 } catch (Exception ex){
                     this.callbackContext.error(makeError("UNKNOWN_ERROR: "+ex, UNKNOWN_ERROR));
                     if (iabHelper != null) iabHelper.flagEndAsync();
@@ -778,7 +784,7 @@ public class InAppBilling extends CordovaPlugin {
                     };
                     if (iabHelperInventory.hasPurchase(purchaseProductId)){
                         boolean consumable = completeNext.getArgsConsumable(true);
-                        thisNext.inAppBilling.iabHelper.logInfo("conumeable: "+Boolean.toString(consumable));
+                        thisNext.inAppBilling.iabHelper.logInfo("consumeable: "+Boolean.toString(consumable));
                         iabHelperInventory.getPurchase(purchaseProductId).setIsConsumable(consumable);
                     }
                     doBillingCompletePurchase(completeNext);
