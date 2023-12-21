@@ -239,6 +239,7 @@ inAppPurchases.purchase = function (productId,upgradeProductId="",replacementMod
                     var purchase = {
                         productId: res.productId,
                             //productType: res.productType,
+                        purchaseToken: res.purchaseToken,
                         purchaseTime: res.purchaseTime,
                         purchaseId: res.purchaseId,
                         quantity: res.quantity,
