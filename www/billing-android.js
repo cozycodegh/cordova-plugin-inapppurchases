@@ -243,9 +243,9 @@ inAppPurchases.purchase = function (productId,upgradeProductId="",replacementMod
                         purchaseTime: res.purchaseTime,
                         purchaseId: res.purchaseId,
                         quantity: res.quantity,
-                        verified: res.verified == 1,
-                        pending: res.pending == 1,
-                        completed: res.pending == 0,
+                        verified: res.verified,
+                        pending: res.pending,
+                        completed: res.completed,
                         receipt: res.receipt
                     };
                     inAppPurchases.purchases[purchase.productId] = purchase;
