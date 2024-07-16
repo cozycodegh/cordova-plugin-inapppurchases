@@ -6,8 +6,8 @@ jump to: [PLUGIN USAGE](#plugin-usage) | [Testing App](#testing-app) | [Demo App
 ***Cordova*** plugin to add ***in-app purchases*** (and ***subscriptions***) into an app. <br>
 Use JavaScript to view, make, and complete purchases.
 
-Updated __2023__ for [Cordova](https://cordova.apache.org/) with current:<br>
-__Android__: *Billing Library 6* (released June 2023) (verifies receipts internally)<br>
+Updated __2024__ for [Cordova](https://cordova.apache.org/) with current:<br>
+__Android__: *Billing Library 7* (released May 2024) (verifies receipts internally)<br>
 __iOS__: *StoreKit* (not StoreKit 2, released 2021, which is only available for iOS 15 and up) (does not verify receipts currently - it returns them, and can be verified if needed)<br>
 __Amazon Fire__: compatible, but untested <br>
 __Browser__: not implemented<br>
