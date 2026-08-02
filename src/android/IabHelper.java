@@ -66,6 +66,8 @@ import com.android.billingclient.api.BillingFlowParams.SubscriptionUpdateParams;
 import com.android.billingclient.api.BillingFlowParams.SubscriptionUpdateParams.ReplacementMode;
 import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.ConsumeResponseListener;
+import com.android.billingclient.api.PendingPurchasesParams;
+import com.android.billingclient.api.QueryProductDetailsResult;
 
 import static com.alexdisler_github_cozycode.inapppurchases.InAppBilling.BILLING_API_VERSION;
 import static com.alexdisler_github_cozycode.inapppurchases.InAppBilling.OK;
@@ -450,7 +452,7 @@ public class IabHelper implements PurchasesUpdatedListener {
         if (mSetupDone) throw new IllegalStateException("IAB helper is already set up.");
         mBillingClient = BillingClient.newBuilder(mContext)
             .setListener(this)
-            .enablePendingPurchases()
+            .enablePendingPurchases(PendingPurchasesParams.newBuilder().enableOneTimeProducts().build())
             .build();
         mBillingClient.startConnection(new BillingClientStateListener() {
                 @Override
@@ -518,8 +520,9 @@ public class IabHelper implements PurchasesUpdatedListener {
         
         mBillingClient.queryProductDetailsAsync(
              queryProductDetailsParams, new ProductDetailsResponseListener() {
-                 public void onProductDetailsResponse(BillingResult billingResult, List<ProductDetails> productDetailsList) {
+                 public void onProductDetailsResponse(BillingResult billingResult, QueryProductDetailsResult queryResult) {
                      try {
+                         List<ProductDetails> productDetailsList = queryResult.getProductDetailsList();
                          logInfo (TAG + "PRODUCTDETAILS" + " " + "Received these product details: ");
                          //logInfo(productDetailsList.toString());
                          // check billingResult
